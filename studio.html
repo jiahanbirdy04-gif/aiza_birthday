@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Studio</title>
+<link rel="stylesheet" href="studio.css">
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Content Studio</h1>
+  <p class="subtitle">Add everything here — no code. When you're done, tap Generate and you'll get a folder to drop straight into your GitHub repo.</p>
+
+  <div class="steps">
+    <strong>How this works</strong>
+    <ol>
+      <li>Fill in your photos, audio, music, letter and flower notes below.</li>
+      <li>Tap <strong>Generate my site files</strong> — it downloads a .zip.</li>
+      <li>Unzip it. Open your repo on github.com, drag the unzipped <code>assets</code> folder in, and commit (it'll ask to replace the old one — confirm).</li>
+      <li>Your site updates automatically in about a minute.</li>
+    </ol>
+  </div>
+
+  <!-- RECIPIENT -->
+  <div class="card">
+    <h2>Who is this for?</h2>
+    <p class="hint">Shows on the landing page as "happy birthday, ___".</p>
+    <input type="text" id="recipient-name" placeholder="e.g. Alex">
+  </div>
+
+  <!-- PHOTOS -->
+  <div class="card">
+    <h2>Photos</h2>
+    <p class="hint">Pick as many as you like — order here is the order they'll appear.</p>
+    <label class="file-drop" for="photo-input">
+      <span class="ft">Tap to choose photos</span>
+      <span class="fs">You can select multiple at once</span>
+      <input type="file" id="photo-input" accept="image/*" multiple>
+    </label>
+    <div class="thumb-grid" id="photo-thumbs"></div>
+  </div>
+
+  <!-- AUDIO -->
+  <div class="card">
+    <h2>Happy Birthday audio</h2>
+    <p class="hint">The clip that plays during the finale, once the candle's blown out.</p>
+    <label class="file-drop" for="audio-input">
+      <span class="ft">Tap to choose an audio clip</span>
+      <span class="fs">MP3 works best</span>
+      <input type="file" id="audio-input" accept="audio/*">
+    </label>
+    <audio class="audio-preview" id="audio-preview" controls style="display:none;"></audio>
+  </div>
+
+  <!-- MUSIC -->
+  <div class="card">
+    <h2>Music page</h2>
+    <p class="hint">A featured track (link to Spotify/YouTube embed is optional) plus a tracklist.</p>
+    <label>Featured track title</label>
+    <input type="text" id="feat-title" placeholder="e.g. Golden Hour">
+    <label>Featured track artist</label>
+    <input type="text" id="feat-artist" placeholder="e.g. JVKE">
+    <label>Featured track embed link (optional)</label>
+    <input type="url" id="feat-embed" placeholder="paste a Spotify/YouTube embed URL">
+    <p class="hint" style="margin-top:14px;">Or upload your own audio file instead — this gives a full playable player instead of an embed.</p>
+    <label class="file-drop" for="feat-audio-input">
+      <span class="ft">Tap to choose an audio file</span>
+      <span class="fs">Optional — only if you're not using an embed URL above</span>
+      <input type="file" id="feat-audio-input" accept="audio/*">
+    </label>
+    <audio class="audio-preview" id="feat-audio-preview" controls style="display:none;"></audio>
+    <label>Tracklist</label>
+    <div id="tracklist-rows"></div>
+    <button type="button" class="add-row-btn" id="add-track">+ add another track</button>
+  </div>
+
+  <!-- FLOWERS -->
+  <div class="card">
+    <h2>Flower notes</h2>
+    <p class="hint">Short affirmations that appear next to the bouquet.</p>
+    <div id="flower-note-inputs"></div>
+  </div>
+
+  <!-- LETTER -->
+  <div class="card">
+    <h2>The letter</h2>
+    <p class="hint">Your message to them. This is reused as the final message in the candle-blow finale too.</p>
+    <textarea id="letter-text" rows="10" placeholder="Dear ..."></textarea>
+  </div>
+
+  <div class="generate-bar">
+    <button class="generate-btn" id="generate-btn">Generate my site files</button>
+    <p class="status" id="status"></p>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="studio.js"></script>
+</body>
+</html>

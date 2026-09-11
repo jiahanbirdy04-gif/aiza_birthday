@@ -1,0 +1,430 @@
+/* ============================================================
+   Noy's 21st — style.css
+   Matches Jia's Canva Sites design: warm cream, serif + handwritten
+   type pairing, purple pill buttons, blush cards, full-page sections.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --cream: #F1E4CE;
+  --cream-light: #F8F0E1;
+  --ink: #221D17;
+  --ink-soft: #5B5347;
+
+  --blush: #FBD9D9;
+  --rose-card: #FADCD3;
+  --lavender: #B98FD1;
+  --lavender-deep: #9A6CB8;
+  --candle-btn: #C08B85;
+
+  --leaf: #5C7A4E;
+  --rose-red: #B23A3A;
+  --rose-red-deep: #8C2A2A;
+  --kraft: #D8B888;
+  --kraft-line: #8A6A3E;
+
+  --serif: 'Playfair Display', Georgia, serif;
+  --hand: 'Caveat', cursive;
+  --sans: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-slow: cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+body { min-height: 100vh; overflow-x: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+button, a { font-family: inherit; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep); outline-offset: 3px; }
+
+/* ---------------- View sections: one full-height "page" at a time ---------------- */
+
+.view {
+  display: none;
+  min-height: 100dvh;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 64px;
+  position: relative;
+  opacity: 0;
+  animation: view-in 520ms var(--ease-slow) forwards;
+}
+
+.view.is-active { display: flex; }
+
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.view-inner {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--hand);
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.view-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 2.2rem;
+  margin: 0 0 6px;
+  line-height: 1.15;
+}
+
+.view-subtitle {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--ink);
+  margin: 0 0 22px;
+}
+.view-subtitle.italic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.pill-btn {
+  display: inline-block;
+  background: var(--lavender);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 26px;
+  cursor: pointer;
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+  box-shadow: 0 4px 12px rgba(154, 108, 184, 0.28);
+}
+.pill-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(154, 108, 184, 0.36); }
+.pill-btn.is-candle { background: var(--candle-btn); box-shadow: 0 4px 12px rgba(192, 139, 133, 0.32); }
+
+.back-link {
+  position: absolute;
+  right: 24px;
+  bottom: 22px;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.back-link svg { width: 16px; height: 16px; }
+
+/* ---------------- Landing: gift box ---------------- */
+
+#view-landing .view-title { font-size: 2.35rem; }
+#view-landing .heart { width: 26px; height: 26px; display: inline-block; vertical-align: -4px; margin-left: 2px; }
+
+.gift-box-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.gift-box-btn svg { width: 92px; height: 92px; transition: transform 260ms var(--ease); }
+.gift-box-btn:hover svg { transform: translateY(-3px) rotate(-2deg); }
+
+/* ---------------- Menu ---------------- */
+
+#view-menu .view-title { font-size: 1.85rem; margin-bottom: 2px; }
+#view-menu .view-subtitle.italic { margin-bottom: 26px; }
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+
+.icon-card {
+  aspect-ratio: 1 / 1;
+  background: var(--cream-light);
+  border: none;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(34, 29, 23, 0.08);
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.icon-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(34, 29, 23, 0.14); }
+.icon-card svg { width: 56%; height: 56%; color: var(--ink); }
+
+/* ---------------- Photos: vertical feed ---------------- */
+
+#view-photos { justify-content: flex-start; padding-top: 40px; }
+#view-photos .view-inner { max-width: 460px; }
+
+.photos-caption {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0 0 18px;
+  text-align: left;
+  width: 100%;
+}
+
+.photo-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+.photo-feed img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(34, 29, 23, 0.16);
+}
+
+.photo-fallback {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  background: var(--cream-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--hand);
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+}
+
+/* ---------------- Music: pink player card ---------------- */
+
+.music-card {
+  width: 100%;
+  background: var(--blush);
+  border-radius: 16px;
+  padding: 26px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 22px rgba(34, 29, 23, 0.10);
+}
+
+.scrubber {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+.scrubber input[type="range"] {
+  width: 100%;
+  accent-color: var(--ink);
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin: 10px 0 14px;
+}
+
+.player-controls button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.player-controls svg { width: 22px; height: 22px; }
+
+.play-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--ink) !important;
+  color: var(--blush) !important;
+}
+.play-btn svg { width: 22px; height: 22px; }
+
+.music-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 0;
+}
+.music-artist {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  margin: 2px 0 0;
+}
+
+.tracklist {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  width: 100%;
+}
+.tracklist li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 2px;
+  border-bottom: 1px dashed rgba(34,29,23,0.15);
+  font-size: 0.84rem;
+  text-align: left;
+}
+.tracklist .t-title { font-weight: 700; }
+.tracklist .t-artist { color: var(--ink-soft); }
+
+/* ---------------- Flowers: quote pills + rose bouquet ---------------- */
+
+.quote-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.quote-pill {
+  background: var(--lavender);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  padding: 10px 16px;
+  opacity: 0;
+  transform: translateY(8px);
+}
+.quote-pill.is-shown {
+  animation: quote-in 520ms var(--ease-slow) forwards;
+}
+@keyframes quote-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bouquet-wrap { width: 100%; display: flex; justify-content: center; margin-top: 4px; }
+.bouquet-wrap svg { width: min(300px, 82%); height: auto; }
+
+/* ---------------- Finale: cake + candle, then letter ---------------- */
+
+#view-finale .cake-card { margin-bottom: 8px; }
+
+.cake-wrap {
+  width: 130px;
+  height: 130px;
+  position: relative;
+}
+.cake-wrap svg { display: block; width: 100%; height: 100%; }
+
+.candle-tap {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.flame {
+  transform-origin: 50% 100%;
+  animation: flicker 1.6s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%, 100% { transform: scaleY(1) rotate(-1deg); }
+  50% { transform: scaleY(1.08) rotate(1.5deg); }
+}
+.flame.is-out { animation: none; opacity: 0; transition: opacity 340ms var(--ease); }
+
+.sparkle {
+  animation: sparkle-pulse 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes sparkle-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.letter-card {
+  width: 100%;
+  background: var(--rose-card);
+  border-radius: 14px;
+  padding: 22px 20px;
+  margin-top: 18px;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(14px);
+}
+.letter-card.is-in {
+  animation: letter-in 620ms var(--ease-slow) forwards;
+}
+@keyframes letter-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.letter-body {
+  font-family: var(--hand);
+  font-size: 1.28rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+
+/* ---------------- misc / scrollbars ---------------- */
+
+.letter-body::-webkit-scrollbar { width: 5px; }
+.letter-body::-webkit-scrollbar-thumb { background: var(--lavender); border-radius: 10px; }
+
+@media (max-width: 380px) {
+  .view-title { font-size: 1.9rem; }
+  #view-landing .view-title { font-size: 2rem; }
+}

@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --base: #F6F1FA;
+  --ink: #2B1E3D;
+  --ink-soft: #6B5C82;
+  --accent: #9B7EDE;
+  --accent-deep: #7B5BC4;
+  --secondary: #D9C9F0;
+  --flame: #FFB86B;
+  --deep: #3D2C56;
+  --card: #FFFFFF;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--base);
+  padding: 24px 16px 80px;
+}
+
+.wrap { max-width: 640px; margin: 0 auto; }
+
+h1 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.7rem;
+  margin: 4px 0 6px;
+}
+
+.subtitle { color: var(--ink-soft); font-size: 0.92rem; margin: 0 0 28px; line-height: 1.5; }
+
+.card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 2px rgba(61,44,86,0.06);
+}
+
+.card h2 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.15rem;
+  margin: 0 0 4px;
+}
+
+.card .hint { color: var(--ink-soft); font-size: 0.84rem; margin: 0 0 14px; }
+
+label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin: 12px 0 5px;
+}
+label:first-of-type { margin-top: 0; }
+
+input[type="text"], input[type="url"], textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--secondary);
+  background: #FBF8FD;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.file-drop {
+  border: 1.5px dashed var(--secondary);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #FBF8FD;
+  transition: border-color 200ms var(--ease), background 200ms var(--ease);
+}
+.file-drop:hover { border-color: var(--accent); background: #F3EBFC; }
+.file-drop input { display: none; }
+.file-drop .ft { font-size: 0.9rem; font-weight: 500; }
+.file-drop .fs { font-size: 0.78rem; color: var(--ink-soft); margin-top: 2px; }
+
+.thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+.thumb {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--secondary);
+}
+.thumb img, .thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb button {
+  position: absolute; top: 3px; right: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(43,30,61,0.75); color: #fff; border: none;
+  font-size: 12px; line-height: 1; cursor: pointer;
+}
+.audio-preview { margin-top: 12px; width: 100%; }
+
+.track-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.track-row input { flex: 1; }
+.track-row button {
+  flex-shrink: 0; width: 34px; border: none; border-radius: 8px;
+  background: #F3EBFC; color: var(--ink-soft); cursor: pointer; font-size: 1rem;
+}
+
+.add-row-btn {
+  margin-top: 4px;
+  background: none; border: 1px dashed var(--secondary); border-radius: 8px;
+  color: var(--accent-deep); padding: 8px 12px; font-size: 0.85rem; cursor: pointer;
+}
+
+.generate-bar {
+  position: sticky; bottom: 0; margin-top: 10px;
+  background: linear-gradient(180deg, transparent, var(--base) 30%);
+  padding-top: 20px;
+}
+
+.generate-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--deep), var(--accent-deep));
+  color: #fff;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(123,91,196,0.3);
+}
+.generate-btn:disabled { opacity: 0.6; cursor: wait; }
+
+.status {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-top: 10px;
+  min-height: 1.2em;
+}
+
+.steps {
+  background: #FBF8FD;
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+.steps ol { margin: 6px 0 0; padding-left: 20px; }

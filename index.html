@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>happy birthday 🕯️</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ LANDING ============ -->
+  <section id="view-landing" class="view is-active">
+    <div class="view-inner">
+      <p class="eyebrow">a little something i made for you...</p>
+      <h1 class="view-title" id="landing-title">happy birthday
+        <span id="landing-name"></span>
+        <svg class="heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20.5c-.4 0-.8-.15-1.1-.45C7.6 17.1 4 13.6 4 9.7 4 7 6.1 5 8.6 5c1.4 0 2.7.65 3.4 1.7C12.7 5.65 14 5 15.4 5 17.9 5 20 7 20 9.7c0 3.9-3.6 7.4-6.9 10.35-.3.3-.7.45-1.1.45Z"/></svg>
+      </h1>
+      <p class="view-subtitle italic">because sometimes a simple greeting isn't enough.</p>
+      <button class="gift-box-btn" id="btn-open-gift" aria-label="Open your gift">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="42" width="72" height="46" rx="3" fill="#E5A93B"/>
+          <rect x="14" y="42" width="72" height="14" fill="#D9922A"/>
+          <rect x="8" y="30" width="84" height="16" rx="3" fill="#EEB84E"/>
+          <rect x="44" y="30" width="12" height="58" fill="#E2477A"/>
+          <rect x="8" y="30" width="84" height="16" fill="none"/>
+          <path d="M50 30 C 38 22, 26 24, 30 12 C 40 12, 48 20, 50 30 Z" fill="#C0335F"/>
+          <path d="M50 30 C 62 22, 74 24, 70 12 C 60 12, 52 20, 50 30 Z" fill="#C0335F"/>
+          <circle cx="50" cy="29" r="5" fill="#8C2049"/>
+        </svg>
+        <span class="pill-btn">OPEN YOUR GIFT</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ MENU ============ -->
+  <section id="view-menu" class="view">
+    <div class="view-inner">
+      <h2 class="view-title">a little world for you</h2>
+      <p class="view-subtitle italic">there's a few things waiting for you...</p>
+      <div class="icon-grid">
+        <button class="icon-card" data-goto="photos" aria-label="Photos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 8.5h2.4L8 6h8l1.6 2.5H20a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1Z"/>
+            <circle cx="12" cy="13.2" r="3.6"/>
+            <circle cx="17.3" cy="10.2" r="0.6" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+        <button class="icon-card" data-goto="music" aria-label="Music">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 17V5.8l9-1.6v11"/>
+            <circle cx="7.5" cy="17.3" r="2.4"/>
+            <circle cx="16.5" cy="15.4" r="2.4"/>
+            <path d="M19 3.2l1.3.9M20.4 5.3l.9 1.6M4.5 7.5l1.2.7M3.6 9.6l1.6.4" opacity=".75"/>
+          </svg>
+        </button>
+        <button class="icon-card" data-goto="flowers" aria-label="Flowers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8.2" cy="8.5" r="2.1"/><circle cx="13.4" cy="6.7" r="2.1"/><circle cx="17.2" cy="10.6" r="2.1"/>
+            <circle cx="6.4" cy="12.8" r="2.1"/><circle cx="11.6" cy="11.6" r="2.2"/>
+            <path d="M11.6 13.8c-1.5 3-3.1 5.2-4.6 6.6M11.6 13.8c.8 3 1.6 5.4 2.6 6.9M11.6 13.8c2 2 4 3.6 6.2 4.6" opacity=".8"/>
+          </svg>
+        </button>
+        <button class="icon-card" data-goto="finale" aria-label="Cake">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2.3c0 1.4-1.5 1.9-1.5 3.3a1.5 1.5 0 0 0 3 0c0-1.4-1.5-1.9-1.5-3.3Z"/>
+            <path d="M5.5 20.5v-6.7a6.5 6.5 0 0 1 13 0v6.7"/>
+            <path d="M4 20.5h16"/>
+            <path d="M8.5 16.5c1-.8 1.6-.8 3 0s2 .8 3 0" opacity=".8"/>
+          </svg>
+        </button>
+      </div>
+      <button class="back-link" data-goto="landing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 6l-6 6 6 6"/></svg>
+        back
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ PHOTOS ============ -->
+  <section id="view-photos" class="view">
+    <div class="view-inner">
+      <p class="photos-caption">our memories, a collection of little moments i never want to forget.</p>
+      <div class="photo-feed" id="photo-feed"></div>
+      <button class="back-link" data-goto="menu" style="position:static; margin-top:22px; align-self:flex-end;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 6l-6 6 6 6"/></svg>
+        back
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ MUSIC ============ -->
+  <section id="view-music" class="view">
+    <div class="view-inner">
+      <p class="eyebrow">if our friendship were a song...</p>
+      <div class="music-card" id="music-card"></div>
+      <button class="back-link" data-goto="menu" style="position:static; margin-top:22px; align-self:flex-end;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 6l-6 6 6 6"/></svg>
+        back
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ FLOWERS ============ -->
+  <section id="view-flowers" class="view">
+    <div class="view-inner">
+      <p class="eyebrow">things i want you to know</p>
+      <div class="quote-stack" id="quote-stack"></div>
+      <div class="bouquet-wrap" id="bouquet-wrap"></div>
+      <button class="back-link" data-goto="menu" style="position:static; margin-top:16px; align-self:flex-end;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 6l-6 6 6 6"/></svg>
+        back
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ FINALE: cake + letter ============ -->
+  <section id="view-finale" class="view">
+    <div class="view-inner">
+      <p class="eyebrow" id="finale-hint">make a wish</p>
+      <div class="cake-card" id="cake-card"></div>
+      <div class="letter-card" id="letter-card" style="display:none;">
+        <p class="letter-body" id="letter-body"></p>
+      </div>
+      <button class="back-link" data-goto="menu" style="position:static; margin-top:18px; align-self:flex-end;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 6l-6 6 6 6"/></svg>
+        back
+      </button>
+    </div>
+  </section>
+
+  <audio id="hbd-audio" preload="none"></audio>
+  <audio id="feature-audio" preload="none"></audio>
+
+  <script src="assets/media.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
