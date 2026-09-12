@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Little Something For You</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --cream: #F1E4CE;
+  --cream-light: #F8F0E1;
+  --ink: #221D17;
+  --ink-soft: #5B5347;
+  --blush: #FBD9D9;
+  --rose-card: #FADCD3;
+  --lavender: #B98FD1;
+  --lavender-deep: #9A6CB8;
+  --candle-btn: #C08B85;
+  --leaf: #5C7A4E;
+  --rose-red: #B23A3A;
+  --rose-red-deep: #8C2A2A;
+  --kraft: #D8B888;
+  --kraft-line: #8A6A3E;
+  --serif: 'Playfair Display', Georgia, serif;
+  --hand: 'Caveat', cursive;
+  --sans: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-slow: cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--cream); color: var(--ink); font-family: var(--sans); }
+body { min-height: 100vh; overflow-x: hidden; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+button, a { font-family: inherit; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep); outline-offset: 3px; }
+
+.view { display: none; min-height: 100dvh; width: 100%; flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 24px 64px; position: relative; opacity: 0; animation: view-in 520ms var(--ease-slow) forwards; }
+.view.is-active { display: flex; }
+@keyframes view-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.view-inner { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.eyebrow { font-family: var(--hand); font-size: 1.5rem; color: var(--ink); margin: 0 0 4px; }
+.view-title { font-family: var(--serif); font-weight: 600; font-size: 2.2rem; margin: 0 0 6px; line-height: 1.15; }
+.view-subtitle { font-family: var(--sans); font-weight: 700; font-size: 0.92rem; color: var(--ink); margin: 0 0 22px; }
+.view-subtitle.italic { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--ink-soft); }
+
+.pill-btn { display: inline-block; background: var(--lavender); color: var(--ink); font-family: var(--sans); font-weight: 800;
+  font-size: 0.82rem; letter-spacing: 0.02em; text-decoration: underline; text-underline-offset: 2px; border: none;
+  border-radius: 999px; padding: 11px 26px; cursor: pointer; transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+  box-shadow: 0 4px 12px rgba(154, 108, 184, 0.28); }
+.pill-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(154, 108, 184, 0.36); }
+.pill-btn.is-candle { background: var(--candle-btn); box-shadow: 0 4px 12px rgba(192, 139, 133, 0.32); }
+
+.back-link { position: absolute; right: 24px; bottom: 22px; font-family: var(--sans); font-weight: 700; font-size: 0.86rem;
+  color: var(--ink); text-decoration: underline; text-underline-offset: 2px; background: none; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px; }
+.back-link svg { width: 16px; height: 16px; }
+
+#view-landing .view-title { font-size: 2.35rem; }
+#view-landing .heart { width: 26px; height: 26px; display: inline-block; vertical-align: -4px; margin-left: 2px; }
+.gift-box-btn { background: none; border: none; cursor: pointer; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.gift-box-btn svg { width: 92px; height: 92px; transition: transform 260ms var(--ease); }
+.gift-box-btn:hover svg { transform: translateY(-3px) rotate(-2deg); }
+
+#view-menu .view-title { font-size: 1.85rem; margin-bottom: 2px; }
+#view-menu .view-subtitle.italic { margin-bottom: 26px; }
+.icon-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; }
+.icon-card { aspect-ratio: 1 / 1; background: var(--cream-light); border: none; border-radius: 14px; display: flex;
+  align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(34, 29, 23, 0.08);
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease); }
+.icon-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(34, 29, 23, 0.14); }
+.icon-card svg { width: 56%; height: 56%; color: var(--ink); }
+
+#view-photos { justify-content: flex-start; padding-top: 40px; }
+#view-photos .view-inner { max-width: 460px; }
+.photos-caption { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; margin: 0 0 18px; text-align: left; width: 100%; }
+.photo-feed { display: flex; flex-direction: column; gap: 18px; width: 100%; }
+.photo-feed img { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 6px 16px rgba(34, 29, 23, 0.16); }
+.photo-fallback { width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; background: var(--cream-light); display: flex;
+  align-items: center; justify-content: center; font-family: var(--hand); font-size: 1.1rem; color: var(--ink-soft); }
+
+.music-card { width: 100%; background: var(--blush); border-radius: 16px; padding: 26px 22px 20px; display: flex;
+  flex-direction: column; align-items: center; box-shadow: 0 8px 22px rgba(34, 29, 23, 0.10); }
+.scrubber { width: 100%; display: flex; align-items: center; margin-bottom: 6px; cursor: pointer; }
+.scrubber input[type="range"] { width: 100%; accent-color: var(--ink); }
+.player-controls { display: flex; align-items: center; justify-content: center; gap: 22px; margin: 10px 0 14px; }
+.player-controls button { background: none; border: none; cursor: pointer; color: var(--ink); display: flex; align-items: center; justify-content: center; }
+.player-controls svg { width: 22px; height: 22px; }
+.play-btn { width: 52px; height: 52px; border-radius: 50%; background: var(--ink) !important; color: var(--blush) !important; }
+.play-btn svg { width: 22px; height: 22px; }
+.music-title { font-family: var(--serif); font-weight: 600; font-size: 1.2rem; margin: 0; }
+.music-artist { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-soft); margin: 2px 0 0; }
+.tracklist { list-style: none; margin: 18px 0 0; padding: 0; width: 100%; }
+.tracklist li { display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px dashed rgba(34,29,23,0.15); font-size: 0.84rem; text-align: left; }
+.tracklist .t-title { font-weight: 700; }
+.tracklist .t-artist { color: var(--ink-soft); }
+
+.quote-stack { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; margin-bottom: 20px; }
+.quote-pill { background: var(--lavender); color: var(--ink); font-family: var(--sans); font-weight: 700; font-size: 0.9rem;
+  border-radius: 4px; padding: 10px 16px; opacity: 0; transform: translateY(8px); }
+.quote-pill.is-shown { animation: quote-in 520ms var(--ease-slow) forwards; }
+@keyframes quote-in { to { opacity: 1; transform: translateY(0); } }
+.bouquet-wrap { width: 100%; display: flex; justify-content: center; margin-top: 4px; }
+.bouquet-wrap svg { width: min(300px, 82%); height: auto; }
+
+#view-finale .cake-card { margin-bottom: 8px; }
+.cake-wrap { width: 130px; height: 130px; position: relative; }
+.cake-wrap svg { display: block; width: 100%; height: 100%; }
+.candle-tap { background: none; border: none; cursor: pointer; padding: 6px; }
+.flame { transform-origin: 50% 100%; animation: flicker 1.6s ease-in-out infinite; }
+@keyframes flicker { 0%, 100% { transform: scaleY(1) rotate(-1deg); } 50% { transform: scaleY(1.08) rotate(1.5deg); } }
+.flame.is-out { animation: none; opacity: 0; transition: opacity 340ms var(--ease); }
+.sparkle { animation: sparkle-pulse 1.8s ease-in-out infinite; transform-origin: center; }
+@keyframes sparkle-pulse { 0%, 100% { opacity: 0.55; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.05); } }
+.letter-card { width: 100%; background: var(--rose-card); border-radius: 14px; padding: 22px 20px; margin-top: 18px;
+  text-align: left; opacity: 0; transform: translateY(14px); }
+.letter-card.is-in { animation: letter-in 620ms var(--ease-slow) forwards; }
+@keyframes letter-in { to { opacity: 1; transform: translateY(0); } }
+.letter-body { font-family: var(--hand); font-size: 1.28rem; line-height: 1.5; white-space: pre-wrap; max-height: 46vh; overflow-y: auto; }
+.letter-body::-webkit-scrollbar { width: 5px; }
+.letter-body::-webkit-scrollbar-thumb { background: var(--lavender); border-radius: 10px; }
+@media (max-width: 380px) { .view-title { font-size: 1.9rem; } #view-landing .view-title { font-size: 2rem; } }
+
+/* ---------------- Editor (only you see this) ---------------- */
+#editFab { position: fixed; bottom: 18px; right: 18px; width: 48px; height: 48px; border-radius: 50%; background: var(--ink);
+  color: var(--cream-light); border: none; font-size: 20px; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.3); z-index: 500; }
+#editorOverlay { display: none; position: fixed; inset: 0; background: var(--cream-light); z-index: 600; overflow-y: auto;
+  padding: 20px 18px 100px; font-family: var(--sans); }
+#editorOverlay.is-open { display: block; }
+.ed-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.ed-head h1 { font-family: var(--serif); font-size: 1.5rem; margin: 0; }
+.ed-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink); }
+.ed-section { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.ed-section h2 { font-family: var(--serif); font-size: 1.1rem; margin: 0 0 10px; }
+.ed-label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase;
+  letter-spacing: 0.03em; margin: 10px 0 4px; }
+.ed-input, .ed-textarea { width: 100%; padding: 9px 11px; border: 1px solid #ddd; border-radius: 8px; font-family: var(--sans);
+  font-size: 0.9rem; background: var(--cream-light); }
+.ed-textarea { min-height: 90px; resize: vertical; font-family: var(--hand); font-size: 1.1rem; }
+.ed-row { display: flex; gap: 8px; margin-bottom: 6px; }
+.ed-row input { flex: 1; }
+.ed-row button { background: #eee; border: none; border-radius: 6px; width: 30px; cursor: pointer; }
+.ed-btn { background: var(--lavender); border: none; border-radius: 8px; padding: 9px 16px; font-weight: 800; cursor: pointer; margin-top: 8px; }
+.ed-btn.secondary { background: #eee; }
+.ed-btn.danger { background: #f3d4d4; }
+.photo-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.photo-thumbs .thumb { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; }
+.photo-thumbs .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-thumbs .thumb button { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: #fff; border: none;
+  border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; line-height: 1; }
+#edStatus { font-size: 0.85rem; color: var(--ink-soft); margin-top: 10px; min-height: 18px; }
+.ed-hint { font-size: 0.78rem; color: var(--ink-soft); margin: 0 0 8px; }
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#B98FD1">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bday Maker">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+<div id="app">
+  <section class="view is-active" id="view-landing">
+    <div class="view-inner">
+      <p class="eyebrow">a little something for</p>
+      <h1 class="view-title" id="landing-name">Friend</h1>
+      <button class="gift-box-btn" data-goto="menu" aria-label="Open your gift">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="12" y="42" width="76" height="46" rx="3" fill="#B98FD1" stroke="#221D17" stroke-width="2"/>
+          <rect x="8" y="30" width="84" height="16" rx="3" fill="#9A6CB8" stroke="#221D17" stroke-width="2"/>
+          <rect x="44" y="30" width="12" height="58" fill="#FBD9D9" stroke="#221D17" stroke-width="1.5"/>
+          <path d="M50 30 C 30 22, 22 6, 36 4 C 48 2, 50 20, 50 30 Z" fill="#FBD9D9" stroke="#221D17" stroke-width="2"/>
+          <path d="M50 30 C 70 22, 78 6, 64 4 C 52 2, 50 20, 50 30 Z" fill="#FBD9D9" stroke="#221D17" stroke-width="2"/>
+        </svg>
+        <span class="pill-btn">tap to open</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="view" id="view-menu">
+    <div class="view-inner">
+      <h1 class="view-title">happy birthday!</h1>
+      <p class="view-subtitle italic">pick where you'd like to start</p>
+      <div class="icon-grid">
+        <button class="icon-card" data-goto="photos" aria-label="Photos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 15l-5-5-4 4-3-3-6 6"/></svg>
+        </button>
+        <button class="icon-card" data-goto="music" aria-label="Music">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </button>
+        <button class="icon-card" data-goto="flowers" aria-label="Flowers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="7" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><circle cx="9" cy="17" r="3"/><circle cx="15" cy="17" r="3"/><path d="M12 20V10"/></svg>
+        </button>
+        <button class="icon-card" data-goto="finale" aria-label="Cake">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v4"/><path d="M4 21v-7a8 8 0 0116 0v7"/><path d="M4 21h16"/><path d="M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="back-link" data-goto="landing">back</button>
+  </section>
+
+  <section class="view" id="view-photos">
+    <div class="view-inner">
+      <h1 class="view-title">photos</h1>
+      <p class="photos-caption">a few of my favorites</p>
+      <div class="photo-feed" id="photo-feed"></div>
+    </div>
+    <button class="back-link" data-goto="menu">back</button>
+  </section>
+
+  <section class="view" id="view-music">
+    <div class="view-inner">
+      <h1 class="view-title">for you</h1>
+      <div class="music-card" id="music-card"></div>
+      <audio id="feature-audio"></audio>
+    </div>
+    <button class="back-link" data-goto="menu">back</button>
+  </section>
+
+  <section class="view" id="view-flowers">
+    <div class="view-inner">
+      <h1 class="view-title">flowers</h1>
+      <div class="quote-stack" id="quote-stack"></div>
+      <div class="bouquet-wrap" id="bouquet-wrap"></div>
+    </div>
+    <button class="back-link" data-goto="menu">back</button>
+  </section>
+
+  <section class="view" id="view-finale">
+    <div class="view-inner">
+      <h1 class="view-title">one more thing</h1>
+      <div class="cake-card" id="cake-card"></div>
+      <p class="view-subtitle italic" id="finale-hint"></p>
+      <div class="letter-card" id="letter-card" style="display:none">
+        <div class="letter-body" id="letter-body"></div>
+      </div>
+      <audio id="hbd-audio"></audio>
+    </div>
+    <button class="back-link" data-goto="menu">back</button>
+  </section>
+</div>
+
+<button id="editFab" title="Edit this site">✏️</button>
+
+<div id="editorOverlay">
+  <div class="ed-head"><h1>Edit Your Site</h1><button class="ed-close" id="edClose">✕ close</button></div>
+  <p class="ed-hint">Fill this in, tap Preview to check it, then Download Website when it's ready to send.</p>
+
+  <div class="ed-section">
+    <h2>Basics</h2>
+    <label class="ed-label">Recipient's name</label>
+    <input class="ed-input" id="edName" placeholder="e.g. Noy">
+  </div>
+
+  <div class="ed-section">
+    <h2>☁️ Cloud Backup</h2>
+    <p class="ed-hint">Gives you a safety copy, and lets you pick this back up from another device. Pick any short code — think of it like a password for this specific site.</p>
+    <label class="ed-label">Site key</label>
+    <input class="ed-input" id="edSiteKey" placeholder="e.g. noy-bday-2026">
+    <button class="ed-btn" id="edCloudSave" type="button">☁️ Save Backup</button>
+    <button class="ed-btn secondary" id="edCloudLoad" type="button">⬇️ Load Backup</button>
+    <div id="edCloudStatus" class="ed-hint" style="margin-top:8px"></div>
+  </div>
+
+  <div class="ed-section">
+    <h2>📷 Photos</h2>
+    <input type="file" id="edPhotoInput" accept="image/*" multiple>
+    <div class="photo-thumbs" id="edPhotoThumbs"></div>
+  </div>
+
+  <div class="ed-section">
+    <h2>🎵 Music</h2>
+    <label class="ed-label">Featured track title</label>
+    <input class="ed-input" id="edMusicTitle" placeholder="e.g. Some Way">
+    <label class="ed-label">Artist</label>
+    <input class="ed-input" id="edMusicArtist" placeholder="e.g. Ben&Ben">
+    <label class="ed-label">Upload the audio file (optional)</label>
+    <input type="file" id="edMusicAudioInput" accept="audio/*">
+    <p class="ed-hint" id="edMusicAudioStatus">No audio uploaded yet.</p>
+    <label class="ed-label">...or paste an embed URL instead (Spotify/YouTube embed link)</label>
+    <input class="ed-input" id="edMusicEmbed" placeholder="https://open.spotify.com/embed/...">
+    <label class="ed-label">Tracklist (optional)</label>
+    <div id="edTracklistRows"></div>
+    <button class="ed-btn secondary" id="edAddTrack" type="button">+ Add track</button>
+  </div>
+
+  <div class="ed-section">
+    <h2>🌸 Flower Notes</h2>
+    <p class="ed-hint">Short affectionate lines — one per box.</p>
+    <div id="edFlowerRows"></div>
+    <button class="ed-btn secondary" id="edAddFlower" type="button">+ Add note</button>
+  </div>
+
+  <div class="ed-section">
+    <h2>🎂 Finale</h2>
+    <label class="ed-label">Happy Birthday audio clip (plays when the candle is blown out)</label>
+    <input type="file" id="edHbdAudioInput" accept="audio/*">
+    <p class="ed-hint" id="edHbdAudioStatus">No audio uploaded yet.</p>
+    <label class="ed-label">Your letter</label>
+    <textarea class="ed-textarea" id="edLetter" placeholder="Write your letter here..."></textarea>
+  </div>
+
+  <button class="ed-btn" id="edPreview" type="button">👁 Preview</button>
+  <button class="ed-btn" id="edDownload" type="button">📥 Download Website (send this file)</button>
+  <div id="edStatus"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ====== Cloud backup (separate Supabase table, doesn't touch Haki's Archive) ====== */
+  var SUPABASE_URL = "https://csyfrsvrdiejtrmfynod.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_pR97KrSVMoXBeyWxy9DUaw_p4iAqGkw";
+  var supa = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  var SITE_KEY_STORAGE = "bdaySiteKey";
+  function getSiteKey() { try { return localStorage.getItem(SITE_KEY_STORAGE) || ""; } catch (e) { return ""; } }
+  function setSiteKeyStorage(v) { try { localStorage.setItem(SITE_KEY_STORAGE, v); } catch (e) {} }
+
+  /* ====== DATA — this whole block gets replaced when you hit Download ====== */
+  var MEDIA = /*MEDIA_START*/{
+    recipientName: "Friend",
+    photos: [],
+    happyBirthdayAudio: { src: "" },
+    music: { featured: { title: "Untitled", artist: "", embedUrl: "", audioSrc: "" }, tracklist: [] },
+    flowerNotes: [
+      "You make every room warmer just by being in it.",
+      "Here's to another year of being exactly who you are.",
+      "So proud of who you're becoming. Keep going.",
+      "Still the easiest person to laugh with, no matter how far apart we are."
+    ],
+    letter: { body: "" }
+  }/*MEDIA_END*/;
+
+  try {
+    var saved = localStorage.getItem("bdaySiteMedia");
+    if (saved) MEDIA = JSON.parse(saved);
+  } catch (e) {}
+
+  function recipientName() { return MEDIA.recipientName || "friend"; }
+
+  /* ====== View rendering (visitor-facing) ====== */
+  function renderAll() {
+    var nameEl = document.getElementById("landing-name");
+    if (nameEl) nameEl.textContent = recipientName();
+    renderPhotos();
+    renderMusic();
+    renderFlowers();
+    renderFinale();
+  }
+
+  function showView(name) {
+    document.querySelectorAll(".view").forEach(function (el) { el.classList.remove("is-active"); });
+    var target = document.getElementById("view-" + name);
+    if (target) {
+      target.style.animation = "none";
+      void target.offsetWidth;
+      target.style.animation = "";
+      target.classList.add("is-active");
+    }
+    if (name === "flowers") animateQuotes();
+    window.scrollTo({ top: 0 });
+  }
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-goto]");
+    if (!btn) return;
+    showView(btn.getAttribute("data-goto"));
+  });
+
+  function esc(s) { return (s == null ? "" : String(s)).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  function renderPhotos() {
+    var feed = document.getElementById("photo-feed");
+    if (!feed) return;
+    var photos = MEDIA.photos || [];
+    if (!photos.length) { feed.innerHTML = '<div class="photo-fallback">no photos added yet</div>'; return; }
+    feed.innerHTML = photos.map(function (p, i) {
+      return '<img loading="lazy" alt="' + esc(p.caption || ("Photo " + (i + 1))) + '" src="' + p.src + '">';
+    }).join("");
+  }
+
+  function renderMusic() {
+    var card = document.getElementById("music-card");
+    if (!card) return;
+    var music = MEDIA.music || { featured: {}, tracklist: [] };
+    var f = music.featured || {};
+    var tracklist = music.tracklist || [];
+    var tracklistHTML = tracklist.length
+      ? '<ul class="tracklist">' + tracklist.map(function (t) { return '<li><span class="t-title">' + esc(t.title) + '</span><span class="t-artist">' + esc(t.artist) + "</span></li>"; }).join("") + "</ul>"
+      : "";
+
+    if (f.audioSrc) {
+      card.innerHTML =
+        '<div class="scrubber"><input type="range" id="music-seek" min="0" max="100" value="0" step="0.1" aria-label="Seek"></div>' +
+        '<div class="player-controls">' +
+        '<button id="music-prev" aria-label="Restart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM20 6v12l-8.5-6z"/></svg></button>' +
+        '<button id="music-play" class="play-btn" aria-label="Play"><svg id="music-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>' +
+        '<button id="music-next" aria-label="Next"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4 6v12l8.5-6z"/></svg></button>' +
+        "</div>" +
+        '<p class="music-title">' + esc(f.title || "Untitled") + '</p><p class="music-artist">' + esc(f.artist || "") + "</p>" + tracklistHTML;
+      var audio = document.getElementById("feature-audio");
+      audio.src = f.audioSrc;
+      var seek = document.getElementById("music-seek");
+      var playBtn = document.getElementById("music-play");
+      var playIcon = document.getElementById("music-play-icon");
+      audio.addEventListener("loadedmetadata", function () { seek.max = audio.duration || 100; });
+      audio.addEventListener("timeupdate", function () { if (!seek.matches(":active")) seek.value = audio.currentTime; });
+      seek.addEventListener("input", function () { audio.currentTime = seek.value; });
+      playBtn.addEventListener("click", function () {
+        if (audio.paused) { audio.play().catch(function () {}); playIcon.innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'; }
+        else { audio.pause(); playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; }
+      });
+      document.getElementById("music-prev").addEventListener("click", function () { audio.currentTime = 0; });
+    } else if (f.embedUrl) {
+      card.innerHTML = '<iframe src="' + esc(f.embedUrl) + '" style="width:100%;min-height:152px;border:none;border-radius:10px;" allow="autoplay; encrypted-media" loading="lazy"></iframe>' +
+        '<p class="music-title" style="margin-top:14px;">' + esc(f.title || "Untitled") + '</p><p class="music-artist">' + esc(f.artist || "") + "</p>" + tracklistHTML;
+    } else {
+      card.innerHTML = '<div class="player-controls"><button class="play-btn" disabled aria-label="No audio yet"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button></div>' +
+        '<p class="music-title">' + esc(f.title || "Untitled") + '</p><p class="music-artist">' + esc(f.artist || "") + "</p>" + tracklistHTML;
+    }
+  }
+
+  function renderFlowers() {
+    var stack = document.getElementById("quote-stack");
+    var notes = MEDIA.flowerNotes || [];
+    if (stack) stack.innerHTML = notes.map(function (n) { return '<div class="quote-pill">' + esc(n) + "</div>"; }).join("");
+    var wrap = document.getElementById("bouquet-wrap");
+    if (wrap && !wrap.dataset.built) { wrap.innerHTML = roseBouquetSVG(); wrap.dataset.built = "1"; }
+  }
+
+  function animateQuotes() {
+    document.querySelectorAll(".quote-pill").forEach(function (el, i) {
+      el.classList.remove("is-shown");
+      void el.offsetWidth;
+      el.style.animationDelay = (i * 130) + "ms";
+      requestAnimationFrame(function () { el.classList.add("is-shown"); });
+    });
+  }
+
+  function roseBlossom(cx, cy, r, color, colorDeep) {
+    var rings = "";
+    var layers = [{ rr: r, rot: 0 }, { rr: r * 0.72, rot: 24 }, { rr: r * 0.46, rot: -18 }, { rr: r * 0.24, rot: 10 }];
+    layers.forEach(function (l, i) {
+      rings += '<circle cx="' + cx + '" cy="' + cy + '" r="' + l.rr + '" fill="' + (i % 2 === 0 ? color : colorDeep) + '" opacity="' + (0.92 - i * 0.06) + '" transform="rotate(' + l.rot + " " + cx + " " + cy + ')"/>';
+    });
+    var petals = "";
+    for (var i = 0; i < 6; i++) {
+      var a = (i / 6) * Math.PI * 2;
+      var px = cx + Math.cos(a) * r * 0.62, py = cy + Math.sin(a) * r * 0.62;
+      petals += '<ellipse cx="' + px + '" cy="' + py + '" rx="' + (r * 0.38) + '" ry="' + (r * 0.26) + '" fill="' + colorDeep + '" opacity="0.5" transform="rotate(' + ((a * 180) / Math.PI) + " " + px + " " + py + ')"/>';
+    }
+    return '<g stroke="#5C1A1A" stroke-width="0.6">' + petals + rings + '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * 0.16) + '" fill="' + colorDeep + '"/></g>';
+  }
+  function leafShape(x, y, len, rot) {
+    return '<path d="M' + x + " " + y + " Q" + (x - len * 0.4) + " " + (y - len * 0.3) + " " + x + " " + (y - len) + " Q" + (x + len * 0.4) + " " + (y - len * 0.3) + " " + x + " " + y + ' Z" fill="#5C7A4E" stroke="#3E5735" stroke-width="0.8" transform="rotate(' + rot + " " + x + " " + y + ')"/>';
+  }
+  function roseBouquetSVG() {
+    var roses = [
+      { cx: 110, cy: 96, r: 26, c: "#C24444", d: "#8C2A2A" }, { cx: 158, cy: 88, r: 24, c: "#B23A3A", d: "#7E2222" },
+      { cx: 84, cy: 122, r: 22, c: "#CB5252", d: "#932E2E" }, { cx: 186, cy: 118, r: 22, c: "#B23A3A", d: "#7E2222" },
+      { cx: 134, cy: 68, r: 21, c: "#C24444", d: "#8C2A2A" }, { cx: 60, cy: 150, r: 18, c: "#CB5252", d: "#932E2E" },
+      { cx: 210, cy: 148, r: 18, c: "#B23A3A", d: "#7E2222" }, { cx: 135, cy: 132, r: 20, c: "#A83232", d: "#701E1E" }
+    ];
+    var roseMarkup = roses.map(function (r) { return roseBlossom(r.cx, r.cy, r.r, r.c, r.d); }).join("");
+    var leaves = [leafShape(70, 168, 34, -20), leafShape(220, 164, 32, 18), leafShape(135, 172, 30, 2), leafShape(100, 178, 26, -8), leafShape(190, 176, 26, 10)].join("");
+    return '<svg viewBox="0 0 300 340" width="100%" height="100%" style="display:block" xmlns="http://www.w3.org/2000/svg">' + leaves + roseMarkup +
+      '<g><path d="M50 200 L250 200 L206 330 Q150 350 94 330 Z" fill="var(--kraft)" stroke="#8A6A3E" stroke-width="2"/>' +
+      '<path d="M50 200 L150 256 L250 200" fill="none" stroke="#8A6A3E" stroke-width="1.2" opacity="0.5"/>' +
+      '<path d="M94 330 L150 256 L206 330" fill="none" stroke="#8A6A3E" stroke-width="1.2" opacity="0.5"/>' +
+      '<rect x="120" y="208" width="60" height="16" rx="8" fill="#B23A3A" transform="rotate(-3 150 216)"/>' +
+      '<path d="M150 216 C 132 206, 114 210, 114 226 C 114 237, 130 239, 141 228" fill="none" stroke="#8C2A2A" stroke-width="4" stroke-linecap="round"/>' +
+      '<path d="M150 216 C 168 206, 186 210, 186 226 C 186 237, 170 239, 159 228" fill="none" stroke="#8C2A2A" stroke-width="4" stroke-linecap="round"/>' +
+      '<circle cx="150" cy="218" r="4.5" fill="#7E2222"/></g></svg>';
+  }
+
+  function cakeSVG() {
+    return '<svg viewBox="0 0 220 200" width="100%" height="100%" style="display:block" xmlns="http://www.w3.org/2000/svg">' +
+      '<ellipse cx="110" cy="184" rx="74" ry="8" fill="#221D17" opacity="0.08"/>' +
+      '<g class="sparkle"><path d="M150 46 L153 54 L161 57 L153 60 L150 68 L147 60 L139 57 L147 54 Z" fill="#E5A93B"/></g>' +
+      '<g class="flame" id="flame"><path d="M110 40 C 104 50 102 58 110 66 C 118 58 116 50 110 40 Z" fill="#C08B85"/></g>' +
+      '<rect x="106" y="64" width="8" height="20" fill="#F8F0E1" stroke="#221D17" stroke-width="1.4"/>' +
+      '<path d="M62 92 Q66 86 70 92 Q74 86 78 92 Q82 86 86 92 Q90 86 94 92 Q98 86 102 92 Q106 86 110 92 Q114 86 118 92 Q122 86 126 92 Q130 86 134 92 Q138 86 142 92 Q146 86 150 92 Q154 86 158 92" fill="none" stroke="#221D17" stroke-width="1.4"/>' +
+      '<rect x="62" y="92" width="96" height="34" rx="3" fill="#F8F0E1" stroke="#221D17" stroke-width="1.4"/>' +
+      '<text x="110" y="114" text-anchor="middle" font-family="Caveat, cursive" font-size="15" fill="#221D17">Happy Birthday</text>' +
+      '<path d="M40 126 Q45 119 50 126 Q55 119 60 126 Q65 119 70 126 Q75 119 80 126 Q85 119 90 126 Q95 119 100 126 Q105 119 110 126 Q115 119 120 126 Q125 119 130 126 Q135 119 140 126 Q145 119 150 126 Q155 119 160 126 Q165 119 170 126 Q175 119 180 126" fill="none" stroke="#221D17" stroke-width="1.4"/>' +
+      '<rect x="40" y="126" width="140" height="46" rx="3" fill="#F8F0E1" stroke="#221D17" stroke-width="1.4"/>' +
+      '<ellipse cx="110" cy="176" rx="80" ry="8" fill="#F8F0E1" stroke="#221D17" stroke-width="1.4"/></svg>';
+  }
+
+  function renderFinale() {
+    var cakeCard = document.getElementById("cake-card");
+    var letterCard = document.getElementById("letter-card");
+    var letterBody = document.getElementById("letter-body");
+    var hint = document.getElementById("finale-hint");
+    if (!cakeCard) return;
+    if (letterBody) letterBody.textContent = (MEDIA.letter && MEDIA.letter.body) || "";
+    letterCard.style.display = "none";
+    letterCard.classList.remove("is-in");
+    if (hint) hint.textContent = "";
+    cakeCard.innerHTML = '<button class="candle-tap" id="candle-tap" aria-label="Blow out the candle"><div class="cake-wrap">' + cakeSVG() + '</div></button>' +
+      '<p class="view-subtitle italic" style="margin-top:10px;margin-bottom:0;">tap this to blow the candles</p>';
+    var tapBtn = document.getElementById("candle-tap");
+    var blown = false;
+    tapBtn.addEventListener("click", function () {
+      if (blown) return;
+      blown = true;
+      var flame = document.getElementById("flame");
+      if (flame) flame.classList.add("is-out");
+      if (hint) hint.textContent = "happy birthday, " + recipientName() + " 🤍";
+      var audio = document.getElementById("hbd-audio");
+      var src = MEDIA.happyBirthdayAudio && MEDIA.happyBirthdayAudio.src;
+      if (audio && src) { audio.src = src; audio.play().catch(function () {}); }
+      setTimeout(function () {
+        letterCard.style.display = "block";
+        void letterCard.offsetWidth;
+        letterCard.classList.add("is-in");
+      }, 500);
+    });
+  }
+
+  /* ====== Editor (only for you) ====== */
+  function fileToDataUrl(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () { resolve(reader.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  var edPhotoThumbs = document.getElementById("edPhotoThumbs");
+  function renderEdPhotoThumbs() {
+    edPhotoThumbs.innerHTML = "";
+    (MEDIA.photos || []).forEach(function (p, i) {
+      var div = document.createElement("div");
+      div.className = "thumb";
+      div.innerHTML = '<img src="' + p.src + '"><button data-i="' + i + '">✕</button>';
+      edPhotoThumbs.appendChild(div);
+    });
+    edPhotoThumbs.querySelectorAll("button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        MEDIA.photos.splice(parseInt(btn.getAttribute("data-i"), 10), 1);
+        renderEdPhotoThumbs();
+      });
+    });
+  }
+
+  document.getElementById("edPhotoInput").addEventListener("change", function (e) {
+    var files = Array.from(e.target.files || []);
+    Promise.all(files.map(fileToDataUrl)).then(function (urls) {
+      MEDIA.photos = (MEDIA.photos || []).concat(urls.map(function (u) { return { src: u, caption: "" }; }));
+      renderEdPhotoThumbs();
+    });
+    e.target.value = "";
+  });
+
+  document.getElementById("edMusicAudioInput").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    fileToDataUrl(f).then(function (url) {
+      MEDIA.music.featured.audioSrc = url;
+      document.getElementById("edMusicAudioStatus").textContent = "✅ " + f.name + " attached.";
+    });
+  });
+  document.getElementById("edHbdAudioInput").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    fileToDataUrl(f).then(function (url) {
+      MEDIA.happyBirthdayAudio.src = url;
+      document.getElementById("edHbdAudioStatus").textContent = "✅ " + f.name + " attached.";
+    });
+  });
+
+  var edTracklistRows = document.getElementById("edTracklistRows");
+  function addTrackRow(title, artist) {
+    var row = document.createElement("div");
+    row.className = "ed-row";
+    row.innerHTML = '<input class="ed-input track-title" placeholder="Track title" value="' + esc(title || "") + '">' +
+      '<input class="ed-input track-artist" placeholder="Artist" value="' + esc(artist || "") + '">' +
+      '<button type="button">✕</button>';
+    row.querySelector("button").addEventListener("click", function () { row.remove(); });
+    edTracklistRows.appendChild(row);
+  }
+  document.getElementById("edAddTrack").addEventListener("click", function () { addTrackRow("", ""); });
+
+  var edFlowerRows = document.getElementById("edFlowerRows");
+  function addFlowerRow(text) {
+    var row = document.createElement("div");
+    row.className = "ed-row";
+    row.innerHTML = '<input class="ed-input flower-note" value="' + esc(text || "") + '"><button type="button">✕</button>';
+    row.querySelector("button").addEventListener("click", function () { row.remove(); });
+    edFlowerRows.appendChild(row);
+  }
+  document.getElementById("edAddFlower").addEventListener("click", function () { addFlowerRow(""); });
+
+  function openEditor() {
+    document.getElementById("edSiteKey").value = getSiteKey();
+    document.getElementById("edName").value = MEDIA.recipientName || "";
+    document.getElementById("edMusicTitle").value = (MEDIA.music.featured && MEDIA.music.featured.title) || "";
+    document.getElementById("edMusicArtist").value = (MEDIA.music.featured && MEDIA.music.featured.artist) || "";
+    document.getElementById("edMusicEmbed").value = (MEDIA.music.featured && MEDIA.music.featured.embedUrl) || "";
+    document.getElementById("edLetter").value = (MEDIA.letter && MEDIA.letter.body) || "";
+    document.getElementById("edMusicAudioStatus").textContent = (MEDIA.music.featured && MEDIA.music.featured.audioSrc) ? "✅ Audio already attached." : "No audio uploaded yet.";
+    document.getElementById("edHbdAudioStatus").textContent = (MEDIA.happyBirthdayAudio && MEDIA.happyBirthdayAudio.src) ? "✅ Audio already attached." : "No audio uploaded yet.";
+    renderEdPhotoThumbs();
+    edTracklistRows.innerHTML = "";
+    (MEDIA.music.tracklist || []).forEach(function (t) { addTrackRow(t.title, t.artist); });
+    edFlowerRows.innerHTML = "";
+    (MEDIA.flowerNotes || []).forEach(function (n) { addFlowerRow(n); });
+    document.getElementById("editorOverlay").classList.add("is-open");
+  }
+  document.getElementById("editFab").addEventListener("click", openEditor);
+  document.getElementById("edClose").addEventListener("click", function () { document.getElementById("editorOverlay").classList.remove("is-open"); });
+
+  function collectFromEditor() {
+    MEDIA.recipientName = document.getElementById("edName").value.trim() || "Friend";
+    MEDIA.music.featured.title = document.getElementById("edMusicTitle").value.trim() || "Untitled";
+    MEDIA.music.featured.artist = document.getElementById("edMusicArtist").value.trim();
+    MEDIA.music.featured.embedUrl = document.getElementById("edMusicEmbed").value.trim();
+    MEDIA.music.tracklist = Array.from(edTracklistRows.querySelectorAll(".ed-row")).map(function (row) {
+      return { title: row.querySelector(".track-title").value.trim(), artist: row.querySelector(".track-artist").value.trim() };
+    }).filter(function (t) { return t.title; });
+    MEDIA.flowerNotes = Array.from(edFlowerRows.querySelectorAll(".flower-note")).map(function (i) { return i.value.trim(); }).filter(Boolean);
+    MEDIA.letter.body = document.getElementById("edLetter").value;
+  }
+
+  document.getElementById("edPreview").addEventListener("click", function () {
+    collectFromEditor();
+    try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+    renderAll();
+    document.getElementById("editorOverlay").classList.remove("is-open");
+    showView("landing");
+    document.getElementById("edStatus").textContent = "";
+  });
+
+  document.getElementById("edCloudSave").addEventListener("click", function () {
+    var statusEl = document.getElementById("edCloudStatus");
+    var key = document.getElementById("edSiteKey").value.trim();
+    if (!key) { statusEl.textContent = "Pick a site key first."; return; }
+    if (!supa) { statusEl.textContent = "Couldn't connect — check your internet connection."; return; }
+    setSiteKeyStorage(key);
+    collectFromEditor();
+    try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+    statusEl.textContent = "Saving...";
+    supa.from("birthday_sites").upsert({ site_key: key, data: MEDIA, updated_at: new Date().toISOString() })
+      .then(function (res) {
+        if (res.error) { statusEl.textContent = "Couldn't save: " + res.error.message; return; }
+        statusEl.textContent = "✅ Backed up under \"" + key + "\".";
+      });
+  });
+
+  document.getElementById("edCloudLoad").addEventListener("click", function () {
+    var statusEl = document.getElementById("edCloudStatus");
+    var key = document.getElementById("edSiteKey").value.trim();
+    if (!key) { statusEl.textContent = "Type the site key to load."; return; }
+    if (!supa) { statusEl.textContent = "Couldn't connect — check your internet connection."; return; }
+    statusEl.textContent = "Loading...";
+    supa.from("birthday_sites").select("data").eq("site_key", key).maybeSingle()
+      .then(function (res) {
+        if (res.error) { statusEl.textContent = "Couldn't load: " + res.error.message; return; }
+        if (!res.data) { statusEl.textContent = "Nothing saved yet under that key."; return; }
+        MEDIA = res.data.data;
+        setSiteKeyStorage(key);
+        try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+        renderAll();
+        openEditor();
+        statusEl.textContent = "✅ Loaded from cloud.";
+      });
+  });
+
+  document.getElementById("edDownload").addEventListener("click", function () {
+    collectFromEditor();
+    try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+    renderAll();
+    var statusEl = document.getElementById("edStatus");
+    statusEl.textContent = "Packing everything up...";
+    setTimeout(function () {
+      try {
+        var fullHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+        var mediaJson = JSON.stringify(MEDIA);
+        fullHtml = fullHtml.replace(/\/\*MEDIA_START\*\/[\s\S]*?\/\*MEDIA_END\*\//, "/*MEDIA_START*/" + mediaJson + "/*MEDIA_END*/");
+        var blob = new Blob([fullHtml], { type: "text/html" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = (MEDIA.recipientName || "birthday").replace(/[^a-z0-9]+/gi, "-").toLowerCase() + "-birthday-site.html";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        statusEl.textContent = "✅ Downloaded! Send that file to your friend, or upload it to GitHub Pages like before.";
+      } catch (err) {
+        statusEl.textContent = "Something went wrong — try removing a photo or two if files are very large.";
+      }
+    }, 50);
+  });
+
+  renderAll();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
+})();
+</script>
+</body>
+</html>
