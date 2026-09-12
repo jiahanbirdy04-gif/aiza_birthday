@@ -270,6 +270,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   <div class="ed-section">
     <h2>📷 Photos</h2>
     <input type="file" id="edPhotoInput" accept="image/*" multiple>
+    <button class="ed-btn secondary" id="edCompressExisting" type="button" style="margin-top:8px">🗜️ Shrink Already-Added Photos</button>
     <div class="photo-thumbs" id="edPhotoThumbs"></div>
   </div>
 
@@ -533,6 +534,32 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     });
   }
 
+  // Phone camera photos are often 3-5MB each at full resolution — embedding 30+ of those
+  // directly would make the file (and the cloud backup) far too large to save or download
+  // reliably. This shrinks each photo to a sensible max size and compresses it to JPEG
+  // before it ever gets embedded, while still looking sharp on a phone screen.
+  function compressImageFile(file, maxDim, quality) {
+    maxDim = maxDim || 1280;
+    quality = quality || 0.75;
+    return fileToDataUrl(file).then(function (rawDataUrl) {
+      return new Promise(function (resolve) {
+        var img = new Image();
+        img.onload = function () {
+          var w = img.naturalWidth, h = img.naturalHeight;
+          var scale = Math.min(1, maxDim / Math.max(w, h));
+          var canvas = document.createElement("canvas");
+          canvas.width = Math.round(w * scale);
+          canvas.height = Math.round(h * scale);
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        img.onerror = function () { resolve(rawDataUrl); }; // fall back to original if it can't be decoded
+        img.src = rawDataUrl;
+      });
+    });
+  }
+
   var edPhotoThumbs = document.getElementById("edPhotoThumbs");
   function renderEdPhotoThumbs() {
     edPhotoThumbs.innerHTML = "";
@@ -550,11 +577,55 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     });
   }
 
+  function compressDataUrl(dataUrl, maxDim, quality) {
+    return new Promise(function (resolve) {
+      var img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth, h = img.naturalHeight;
+        var scale = Math.min(1, maxDim / Math.max(w, h));
+        var canvas = document.createElement("canvas");
+        canvas.width = Math.round(w * scale);
+        canvas.height = Math.round(h * scale);
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = function () { resolve(dataUrl); };
+      img.src = dataUrl;
+    });
+  }
+
+  document.getElementById("edCompressExisting").addEventListener("click", function () {
+    var statusEl = document.getElementById("edCloudStatus");
+    var photos = MEDIA.photos || [];
+    if (!photos.length) { if (statusEl) statusEl.textContent = "No photos added yet."; return; }
+    if (statusEl) statusEl.textContent = "Shrinking " + photos.length + " photo" + (photos.length === 1 ? "" : "s") + "... this may take a moment.";
+    // One at a time (not all at once) — decoding many full-size images simultaneously is
+    // exactly the kind of thing that can crash a phone browser's tab.
+    var i = 0;
+    function next() {
+      if (i >= photos.length) {
+        renderEdPhotoThumbs();
+        if (statusEl) statusEl.textContent = "✅ Done — photos are now much smaller.";
+        return;
+      }
+      compressDataUrl(photos[i].src, 1280, 0.75).then(function (compressed) {
+        photos[i].src = compressed;
+        i++;
+        next();
+      });
+    }
+    next();
+  });
+
   document.getElementById("edPhotoInput").addEventListener("change", function (e) {
     var files = Array.from(e.target.files || []);
-    Promise.all(files.map(fileToDataUrl)).then(function (urls) {
+    var statusEl = document.getElementById("edCloudStatus");
+    if (statusEl) statusEl.textContent = "Compressing " + files.length + " photo" + (files.length === 1 ? "" : "s") + "...";
+    Promise.all(files.map(function (f) { return compressImageFile(f, 1280, 0.75); })).then(function (urls) {
       MEDIA.photos = (MEDIA.photos || []).concat(urls.map(function (u) { return { src: u, caption: "" }; }));
       renderEdPhotoThumbs();
+      if (statusEl) statusEl.textContent = "";
     });
     e.target.value = "";
   });
@@ -645,6 +716,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (!supa) { statusEl.textContent = "Couldn't connect — check your internet connection."; return; }
     setSiteKeyStorage(key);
     collectFromEditor();
+    var payloadSize = JSON.stringify(MEDIA).length;
+    if (payloadSize > 15 * 1024 * 1024) {
+      statusEl.textContent = "This is too large to back up (" + Math.round(payloadSize / 1024 / 1024) + "MB) — tap \"Shrink Already-Added Photos\" above, or remove a few photos, then try again.";
+      return;
+    }
     try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
     statusEl.textContent = "Saving...";
     supa.from("birthday_sites").upsert({ site_key: key, data: MEDIA, updated_at: new Date().toISOString() })
