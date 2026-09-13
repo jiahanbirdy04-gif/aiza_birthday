@@ -258,12 +258,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   </div>
 
   <div class="ed-section">
-    <h2>☁️ Cloud Backup</h2>
-    <p class="ed-hint">Gives you a safety copy, and lets you pick this back up from another device. Pick any short code — think of it like a password for this specific site.</p>
+    <h2>☁️ Cloud Sync</h2>
+    <p class="ed-hint">Everything you edit here saves automatically — nothing is lost if you close the tab or refresh. A site key was set for you automatically; change it to something memorable if you want to pick this up on another device.</p>
     <label class="ed-label">Site key</label>
     <input class="ed-input" id="edSiteKey" placeholder="e.g. noy-bday-2026">
-    <button class="ed-btn" id="edCloudSave" type="button">☁️ Save Backup</button>
-    <button class="ed-btn secondary" id="edCloudLoad" type="button">⬇️ Load Backup</button>
+    <button class="ed-btn secondary" id="edCloudLoad" type="button">⬇️ Load From a Different Site Key</button>
     <div id="edCloudStatus" class="ed-hint" style="margin-top:8px"></div>
   </div>
 
@@ -322,6 +321,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   var SITE_KEY_STORAGE = "bdaySiteKey";
   function getSiteKey() { try { return localStorage.getItem(SITE_KEY_STORAGE) || ""; } catch (e) { return ""; } }
   function setSiteKeyStorage(v) { try { localStorage.setItem(SITE_KEY_STORAGE, v); } catch (e) {} }
+  function ensureSiteKey() {
+    var key = getSiteKey();
+    if (!key) {
+      key = "site-" + Math.random().toString(36).slice(2, 8);
+      setSiteKeyStorage(key);
+    }
+    return key;
+  }
 
   /* ====== DATA — this whole block gets replaced when you hit Download ====== */
   var MEDIA = /*MEDIA_START*/{
@@ -573,6 +580,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       btn.addEventListener("click", function () {
         MEDIA.photos.splice(parseInt(btn.getAttribute("data-i"), 10), 1);
         renderEdPhotoThumbs();
+        scheduleAutoSave();
       });
     });
   }
@@ -607,6 +615,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       if (i >= photos.length) {
         renderEdPhotoThumbs();
         if (statusEl) statusEl.textContent = "✅ Done — photos are now much smaller.";
+        scheduleAutoSave();
         return;
       }
       compressDataUrl(photos[i].src, 1280, 0.75).then(function (compressed) {
@@ -626,6 +635,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       MEDIA.photos = (MEDIA.photos || []).concat(urls.map(function (u) { return { src: u, caption: "" }; }));
       renderEdPhotoThumbs();
       if (statusEl) statusEl.textContent = "";
+      scheduleAutoSave();
     });
     e.target.value = "";
   });
@@ -636,6 +646,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     fileToDataUrl(f).then(function (url) {
       MEDIA.music.featured.audioSrc = url;
       document.getElementById("edMusicAudioStatus").textContent = "✅ " + f.name + " attached.";
+      scheduleAutoSave();
     });
   });
   document.getElementById("edHbdAudioInput").addEventListener("change", function (e) {
@@ -644,6 +655,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     fileToDataUrl(f).then(function (url) {
       MEDIA.happyBirthdayAudio.src = url;
       document.getElementById("edHbdAudioStatus").textContent = "✅ " + f.name + " attached.";
+      scheduleAutoSave();
     });
   });
 
@@ -654,7 +666,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     row.innerHTML = '<input class="ed-input track-title" placeholder="Track title" value="' + esc(title || "") + '">' +
       '<input class="ed-input track-artist" placeholder="Artist" value="' + esc(artist || "") + '">' +
       '<button type="button">✕</button>';
-    row.querySelector("button").addEventListener("click", function () { row.remove(); });
+    row.querySelector("button").addEventListener("click", function () { row.remove(); scheduleAutoSave(); });
     edTracklistRows.appendChild(row);
   }
   document.getElementById("edAddTrack").addEventListener("click", function () { addTrackRow("", ""); });
@@ -664,13 +676,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     var row = document.createElement("div");
     row.className = "ed-row";
     row.innerHTML = '<input class="ed-input flower-note" value="' + esc(text || "") + '"><button type="button">✕</button>';
-    row.querySelector("button").addEventListener("click", function () { row.remove(); });
+    row.querySelector("button").addEventListener("click", function () { row.remove(); scheduleAutoSave(); });
     edFlowerRows.appendChild(row);
   }
   document.getElementById("edAddFlower").addEventListener("click", function () { addFlowerRow(""); });
 
   function openEditor() {
-    document.getElementById("edSiteKey").value = getSiteKey();
+    document.getElementById("edSiteKey").value = ensureSiteKey();
     document.getElementById("edName").value = MEDIA.recipientName || "";
     document.getElementById("edMusicTitle").value = (MEDIA.music.featured && MEDIA.music.featured.title) || "";
     document.getElementById("edMusicArtist").value = (MEDIA.music.featured && MEDIA.music.featured.artist) || "";
@@ -700,6 +712,39 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     MEDIA.letter.body = document.getElementById("edLetter").value;
   }
 
+  // Auto-save engine: every edit (typing, adding/removing a photo, a track, a flower note)
+  // quietly saves to both localStorage and the cloud a moment after you stop —
+  // no button to remember, nothing lost on refresh or closing the tab.
+  var autoSaveTimer = null;
+  function scheduleAutoSave() {
+    collectFromEditor();
+    try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+    var statusEl = document.getElementById("edCloudStatus");
+    if (statusEl) statusEl.textContent = "Saving...";
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(function () {
+      if (!supa) { if (statusEl) statusEl.textContent = "Saved on this device (offline — will sync once you're back online)."; return; }
+      var key = ensureSiteKey();
+      var payloadSize = JSON.stringify(MEDIA).length;
+      if (payloadSize > 15 * 1024 * 1024) {
+        if (statusEl) statusEl.textContent = "Saved on this device only — too large for cloud backup right now. Tap \"Shrink Already-Added Photos\" above.";
+        return;
+      }
+      supa.from("birthday_sites").upsert({ site_key: key, data: MEDIA, updated_at: new Date().toISOString() })
+        .then(function (res) {
+          if (!statusEl) return;
+          if (res.error) { statusEl.textContent = "Saved on this device only — cloud save failed: " + res.error.message; return; }
+          statusEl.textContent = "✅ All changes saved.";
+        });
+    }, 900);
+  }
+  document.getElementById("editorOverlay").addEventListener("input", scheduleAutoSave);
+  document.getElementById("edSiteKey").addEventListener("input", function () {
+    var v = document.getElementById("edSiteKey").value.trim();
+    if (v) setSiteKeyStorage(v);
+    scheduleAutoSave();
+  });
+
   document.getElementById("edPreview").addEventListener("click", function () {
     collectFromEditor();
     try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
@@ -707,27 +752,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     document.getElementById("editorOverlay").classList.remove("is-open");
     showView("landing");
     document.getElementById("edStatus").textContent = "";
-  });
-
-  document.getElementById("edCloudSave").addEventListener("click", function () {
-    var statusEl = document.getElementById("edCloudStatus");
-    var key = document.getElementById("edSiteKey").value.trim();
-    if (!key) { statusEl.textContent = "Pick a site key first."; return; }
-    if (!supa) { statusEl.textContent = "Couldn't connect — check your internet connection."; return; }
-    setSiteKeyStorage(key);
-    collectFromEditor();
-    var payloadSize = JSON.stringify(MEDIA).length;
-    if (payloadSize > 15 * 1024 * 1024) {
-      statusEl.textContent = "This is too large to back up (" + Math.round(payloadSize / 1024 / 1024) + "MB) — tap \"Shrink Already-Added Photos\" above, or remove a few photos, then try again.";
-      return;
-    }
-    try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
-    statusEl.textContent = "Saving...";
-    supa.from("birthday_sites").upsert({ site_key: key, data: MEDIA, updated_at: new Date().toISOString() })
-      .then(function (res) {
-        if (res.error) { statusEl.textContent = "Couldn't save: " + res.error.message; return; }
-        statusEl.textContent = "✅ Backed up under \"" + key + "\".";
-      });
   });
 
   document.getElementById("edCloudLoad").addEventListener("click", function () {
@@ -777,6 +801,21 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   });
 
   renderAll();
+
+  // Always pull the latest cloud copy on open, the same way Haki's Archive does — so
+  // whatever you last saved is there automatically, on this device or any other,
+  // without needing to remember to tap Load.
+  ensureSiteKey();
+  if (supa) {
+    supa.from("birthday_sites").select("data").eq("site_key", getSiteKey()).maybeSingle()
+      .then(function (res) {
+        if (res.error || !res.data) return; // nothing saved yet, or offline — keep what's local
+        MEDIA = res.data.data;
+        try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+        renderAll();
+      })
+      .catch(function () {});
+  }
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
