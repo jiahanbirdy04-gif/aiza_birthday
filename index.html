@@ -37,8 +37,8 @@ body { min-height: 100vh; overflow-x: hidden; }
 button, a { font-family: inherit; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep); outline-offset: 3px; }
 
-.view { display: none; min-height: 100dvh; width: 100%; flex-direction: column; align-items: center; justify-content: center;
-  padding: 48px 24px 64px; position: relative; opacity: 0; animation: view-in 520ms var(--ease-slow) forwards; }
+.view { display: none; position: fixed; inset: 0; width: 100%; height: 100dvh; overflow-y: auto; flex-direction: column;
+  align-items: center; justify-content: center; padding: 48px 24px 64px; opacity: 0; animation: view-in 520ms var(--ease-slow) forwards; }
 .view.is-active { display: flex; }
 @keyframes view-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .view-inner { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -294,6 +294,10 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <p class="ed-hint">Short affectionate lines — one per box.</p>
     <div id="edFlowerRows"></div>
     <button class="ed-btn secondary" id="edAddFlower" type="button">+ Add note</button>
+    <label class="ed-label">Bouquet image</label>
+    <p class="ed-hint">Upload your own bouquet picture (a screenshot, a saved image, anything) — it'll replace the plain default drawing. Skip this and the default stays.</p>
+    <input type="file" id="edBouquetInput" accept="image/*">
+    <div id="edBouquetPreview" style="margin-top:8px"></div>
   </div>
 
   <div class="ed-section">
@@ -328,6 +332,42 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       setSiteKeyStorage(key);
     }
     return key;
+  }
+
+  // Uploads a photo/audio file to Supabase Storage instead of embedding it directly —
+  // this is what actually fixes "pictures not saving": a huge base64 blob was silently
+  // failing to save before. Only a short link gets stored from here on, which is small
+  // and reliable no matter how many photos you add.
+  function dataUrlToBlob(dataUrl) {
+    var parts = dataUrl.split(",");
+    var mimeMatch = /data:([^;]+)/.exec(parts[0]);
+    var mime = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+    var raw = atob(parts[1]);
+    var arr = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+  function extFromMime(mime) {
+    if (!mime) return "bin";
+    if (mime.indexOf("png") !== -1) return "png";
+    if (mime.indexOf("jpeg") !== -1 || mime.indexOf("jpg") !== -1) return "jpg";
+    if (mime.indexOf("webp") !== -1) return "webp";
+    if (mime.indexOf("mp3") !== -1 || mime.indexOf("mpeg") !== -1) return "mp3";
+    if (mime.indexOf("wav") !== -1) return "wav";
+    if (mime.indexOf("m4a") !== -1 || mime.indexOf("mp4") !== -1) return "m4a";
+    return "bin";
+  }
+  function uploadToStorage(dataUrl, folder) {
+    if (!supa) return Promise.resolve(dataUrl); // offline fallback: keep it embedded rather than lose it
+    var blob = dataUrlToBlob(dataUrl);
+    var path = ensureSiteKey() + "/" + folder + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + extFromMime(blob.type);
+    return supa.storage.from("birthday-media").upload(path, blob, { contentType: blob.type, upsert: true })
+      .then(function (res) {
+        if (res.error) return dataUrl; // fall back to embedding it rather than losing the upload entirely
+        var pub = supa.storage.from("birthday-media").getPublicUrl(path);
+        return (pub.data && pub.data.publicUrl) || dataUrl;
+      })
+      .catch(function () { return dataUrl; });
   }
 
   /* ====== DATA — this whole block gets replaced when you hit Download ====== */
@@ -438,7 +478,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     var notes = MEDIA.flowerNotes || [];
     if (stack) stack.innerHTML = notes.map(function (n) { return '<div class="quote-pill">' + esc(n) + "</div>"; }).join("");
     var wrap = document.getElementById("bouquet-wrap");
-    if (wrap && !wrap.dataset.built) { wrap.innerHTML = roseBouquetSVG(); wrap.dataset.built = "1"; }
+    if (!wrap) return;
+    if (MEDIA.bouquetImage) {
+      wrap.innerHTML = '<img src="' + MEDIA.bouquetImage + '" alt="Bouquet" style="width:min(300px,82%);height:auto;display:block">';
+      wrap.dataset.built = "img";
+    } else if (wrap.dataset.built !== "svg") {
+      wrap.innerHTML = roseBouquetSVG();
+      wrap.dataset.built = "svg";
+    }
   }
 
   function animateQuotes() {
@@ -618,11 +665,15 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         scheduleAutoSave();
         return;
       }
-      compressDataUrl(photos[i].src, 1280, 0.75).then(function (compressed) {
-        photos[i].src = compressed;
-        i++;
-        next();
-      });
+      // Already an uploaded link (not a raw embedded photo)? Nothing to shrink — skip it.
+      if (photos[i].src.indexOf("data:") !== 0) { i++; next(); return; }
+      compressDataUrl(photos[i].src, 1280, 0.75)
+        .then(function (compressed) { return uploadToStorage(compressed, "photos"); })
+        .then(function (finalUrl) {
+          photos[i].src = finalUrl;
+          i++;
+          next();
+        });
     }
     next();
   });
@@ -631,30 +682,50 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     var files = Array.from(e.target.files || []);
     var statusEl = document.getElementById("edCloudStatus");
     if (statusEl) statusEl.textContent = "Compressing " + files.length + " photo" + (files.length === 1 ? "" : "s") + "...";
-    Promise.all(files.map(function (f) { return compressImageFile(f, 1280, 0.75); })).then(function (urls) {
-      MEDIA.photos = (MEDIA.photos || []).concat(urls.map(function (u) { return { src: u, caption: "" }; }));
-      renderEdPhotoThumbs();
-      if (statusEl) statusEl.textContent = "";
-      scheduleAutoSave();
-    });
+    Promise.all(files.map(function (f) { return compressImageFile(f, 1280, 0.75); }))
+      .then(function (compressedUrls) {
+        if (statusEl) statusEl.textContent = "Uploading " + compressedUrls.length + " photo" + (compressedUrls.length === 1 ? "" : "s") + "...";
+        return Promise.all(compressedUrls.map(function (u) { return uploadToStorage(u, "photos"); }));
+      })
+      .then(function (finalUrls) {
+        MEDIA.photos = (MEDIA.photos || []).concat(finalUrls.map(function (u) { return { src: u, caption: "" }; }));
+        renderEdPhotoThumbs();
+        if (statusEl) statusEl.textContent = "";
+        scheduleAutoSave();
+      });
     e.target.value = "";
   });
 
   document.getElementById("edMusicAudioInput").addEventListener("change", function (e) {
     var f = e.target.files && e.target.files[0];
     if (!f) return;
-    fileToDataUrl(f).then(function (url) {
-      MEDIA.music.featured.audioSrc = url;
-      document.getElementById("edMusicAudioStatus").textContent = "✅ " + f.name + " attached.";
+    var statusLbl = document.getElementById("edMusicAudioStatus");
+    statusLbl.textContent = "Uploading...";
+    fileToDataUrl(f).then(function (url) { return uploadToStorage(url, "audio"); }).then(function (finalUrl) {
+      MEDIA.music.featured.audioSrc = finalUrl;
+      statusLbl.textContent = "✅ " + f.name + " attached.";
       scheduleAutoSave();
     });
   });
   document.getElementById("edHbdAudioInput").addEventListener("change", function (e) {
     var f = e.target.files && e.target.files[0];
     if (!f) return;
-    fileToDataUrl(f).then(function (url) {
-      MEDIA.happyBirthdayAudio.src = url;
-      document.getElementById("edHbdAudioStatus").textContent = "✅ " + f.name + " attached.";
+    var statusLbl = document.getElementById("edHbdAudioStatus");
+    statusLbl.textContent = "Uploading...";
+    fileToDataUrl(f).then(function (url) { return uploadToStorage(url, "audio"); }).then(function (finalUrl) {
+      MEDIA.happyBirthdayAudio.src = finalUrl;
+      statusLbl.textContent = "✅ " + f.name + " attached.";
+      scheduleAutoSave();
+    });
+  });
+  document.getElementById("edBouquetInput").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    var previewEl = document.getElementById("edBouquetPreview");
+    previewEl.textContent = "Uploading...";
+    compressImageFile(f, 700, 0.85).then(function (url) { return uploadToStorage(url, "bouquet"); }).then(function (finalUrl) {
+      MEDIA.bouquetImage = finalUrl;
+      previewEl.innerHTML = '<img src="' + finalUrl + '" style="max-width:120px;border-radius:8px;display:block">';
       scheduleAutoSave();
     });
   });
@@ -695,6 +766,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     (MEDIA.music.tracklist || []).forEach(function (t) { addTrackRow(t.title, t.artist); });
     edFlowerRows.innerHTML = "";
     (MEDIA.flowerNotes || []).forEach(function (n) { addFlowerRow(n); });
+    var bouquetPreview = document.getElementById("edBouquetPreview");
+    bouquetPreview.innerHTML = MEDIA.bouquetImage ? '<img src="' + MEDIA.bouquetImage + '" style="max-width:120px;border-radius:8px;display:block">' : "";
     document.getElementById("editorOverlay").classList.add("is-open");
   }
   document.getElementById("editFab").addEventListener("click", openEditor);
@@ -735,6 +808,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
           if (!statusEl) return;
           if (res.error) { statusEl.textContent = "Saved on this device only — cloud save failed: " + res.error.message; return; }
           statusEl.textContent = "✅ All changes saved.";
+        })
+        .catch(function () {
+          // A network-level failure (timeout, dropped connection, payload rejected outright)
+          // throws here instead of returning an error object — this used to fail completely
+          // silently, which is exactly what made it look like "photos aren't saving."
+          if (statusEl) statusEl.textContent = "Saved on this device only — couldn't reach the cloud. Check your connection and it'll retry on your next edit.";
         });
     }, 900);
   }
