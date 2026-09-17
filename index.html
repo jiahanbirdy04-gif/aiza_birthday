@@ -8,13 +8,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 
 :root {
-  --cream: #1A0B2E;
-  --cream-light: #2A1B45;
+  --cream: #2D1B4A;
+  --cream-light: #3C2A5E;
   --ink: #F5EDE6;
   --ink-soft: #C9B8D9;
   --ink-dark: #2A0F1C;
-  --blush: #35234F;
-  --rose-card: #33204F;
+  --blush: #45315F;
+  --rose-card: #422C5C;
   --lavender: #FFB7A5;
   --lavender-deep: #FFB7A5;
   --candle-btn: #E8907A;
@@ -76,12 +76,24 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .photo-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; padding: 6px 6px 22px; margin: 0 -6px; scrollbar-width: none; }
 .photo-feed::-webkit-scrollbar { display: none; }
-.photo-card { flex: 0 0 78%; max-width: 320px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
-  padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center;
+.photo-card { flex: 0 0 90%; max-width: 380px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
+  padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center;
   backdrop-filter: blur(2px); }
-.photo-card img { display: block; width: 100%; height: auto; max-height: 62vh; border-radius: 10px; object-fit: cover; }
+.photo-card img { display: block; width: 100%; height: auto; max-height: 68vh; border-radius: 10px; object-fit: cover; }
+.photo-caption { font-family: var(--hand); font-size: 1.1rem; color: var(--ink); margin: 10px 0 0; text-align: center; width: 100%; }
 .photo-fallback { width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; background: var(--cream-light); display: flex;
   align-items: center; justify-content: center; font-family: var(--hand); font-size: 1.1rem; color: var(--ink-soft); }
+
+#view-videos { justify-content: flex-start; padding-top: 40px; }
+#view-videos .view-inner { max-width: 460px; }
+.videos-caption { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; margin: 0 0 18px; text-align: left; width: 100%; }
+.video-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; padding: 6px 6px 22px; margin: 0 -6px; scrollbar-width: none; }
+.video-feed::-webkit-scrollbar { display: none; }
+.video-card { flex: 0 0 90%; max-width: 380px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
+  padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(2px); }
+.video-card video { display: block; width: 100%; height: auto; max-height: 68vh; border-radius: 10px; background: #000; }
 
 .music-card { width: 100%; background: var(--blush); border-radius: 16px; padding: 26px 22px 20px; display: flex;
   flex-direction: column; align-items: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
@@ -106,17 +118,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .tracklist li { display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px dashed rgba(245,237,230,0.18); font-size: 0.84rem; text-align: left; }
 .tracklist .t-title { font-weight: 700; }
 .tracklist .t-artist { color: var(--ink-soft); }
-
-.quote-stack { display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; margin-bottom: 8px; }
-.quote-pill { display: flex; align-items: center; gap: 10px; background: var(--lavender); color: var(--ink-dark);
-  font-family: var(--sans); font-weight: 700; font-size: 0.92rem; border-radius: 14px; padding: 13px 18px; text-align: left;
-  opacity: 0; transform: translateY(14px) scale(0.94); box-shadow: 0 6px 16px rgba(0,0,0,0.35);
-  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease); }
-.quote-pill:hover, .quote-pill:active { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 22px rgba(0,0,0,0.45); }
-.quote-pill.is-shown { animation: quote-in 560ms var(--ease-slow) forwards; }
-@keyframes quote-in { to { opacity: 1; transform: translateY(0) scale(1); } }
-.quote-spark { flex: 0 0 auto; font-size: 1.05rem; display: inline-block; animation: spark-pulse 2.4s ease-in-out infinite; }
-@keyframes spark-pulse { 0%, 100% { transform: scale(0.85) rotate(-6deg); opacity: 0.7; } 50% { transform: scale(1.08) rotate(6deg); opacity: 1; } }
 
 #view-finale .cake-card { margin-bottom: 8px; }
 .cake-wrap { width: 130px; height: 130px; position: relative; }
@@ -159,10 +160,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .ed-btn { background: var(--lavender); color: var(--ink-dark); border: none; border-radius: 8px; padding: 9px 16px; font-weight: 800; cursor: pointer; margin-top: 8px; }
 .ed-btn.secondary { background: rgba(245,237,230,0.16); }
 .ed-btn.danger { background: #f3b8ae; }
-.photo-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.photo-thumbs .thumb { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; }
-.photo-thumbs .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo-thumbs .thumb button { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: #fff; border: none;
+.photo-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.photo-thumbs .thumb { width: 76px; }
+.photo-thumbs .thumb-img { position: relative; width: 76px; height: 76px; border-radius: 8px; overflow: hidden; }
+.photo-thumbs .thumb-img img, .photo-thumbs .thumb-img video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-thumbs .thumb-caption { width: 100%; margin-top: 4px; font-size: 0.7rem; padding: 3px 5px; border-radius: 6px; box-sizing: border-box;
+  border: 1px solid rgba(245,237,230,0.25); background: var(--cream-light); color: var(--ink); font-family: var(--sans); }
+.photo-thumbs .thumb-img button { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: #fff; border: none;
   border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; line-height: 1; }
 #edStatus { font-size: 0.85rem; color: var(--ink-soft); margin-top: 10px; min-height: 18px; }
 .ed-hint { font-size: 0.78rem; color: var(--ink-soft); margin: 0 0 8px; }
@@ -183,7 +187,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .crop-hint { color: var(--ink-soft); font-size: 0.8rem; margin-top: 10px; text-align: center; }
 </style>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1A0B2E">
+<meta name="theme-color" content="#2D1B4A">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -221,8 +225,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         <button class="icon-card" data-goto="music" aria-label="Music">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         </button>
-        <button class="icon-card" data-goto="flowers" aria-label="Flowers">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="7" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><circle cx="9" cy="17" r="3"/><circle cx="15" cy="17" r="3"/><path d="M12 20V10"/></svg>
+        <button class="icon-card" data-goto="videos" aria-label="Videos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z" stroke-linejoin="round"/></svg>
         </button>
         <button class="icon-card" data-goto="finale" aria-label="Cake">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v4"/><path d="M4 21v-7a8 8 0 0116 0v7"/><path d="M4 21h16"/><path d="M4 17h16"/></svg>
@@ -250,10 +254,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <button class="back-link" data-goto="menu">back</button>
   </section>
 
-  <section class="view" id="view-flowers">
+  <section class="view" id="view-videos">
     <div class="view-inner">
-      <h1 class="view-title">flowers</h1>
-      <div class="quote-stack" id="quote-stack"></div>
+      <h1 class="view-title">videos</h1>
+      <p class="videos-caption">a few little moments — swipe to see more →</p>
+      <div class="video-feed" id="video-feed"></div>
     </div>
     <button class="back-link" data-goto="menu">back</button>
   </section>
@@ -295,10 +300,18 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   <div class="ed-section">
     <h2>📷 Photos</h2>
-    <p class="ed-hint">Each photo opens a crop tool before it's added — drag to reposition, use the slider to zoom.</p>
+    <p class="ed-hint">Each photo opens a crop tool before it's added — drag to reposition, use the slider to zoom. Add a short caption under each one if you'd like.</p>
     <input type="file" id="edPhotoInput" accept="image/*" multiple>
     <button class="ed-btn secondary" id="edCompressExisting" type="button" style="margin-top:8px">🗜️ Shrink Already-Added Photos</button>
     <div class="photo-thumbs" id="edPhotoThumbs"></div>
+  </div>
+
+  <div class="ed-section">
+    <h2>🎥 Videos</h2>
+    <p class="ed-hint">Add at least 5–6 little video clips — visitors can swipe through them just like the photos.</p>
+    <input type="file" id="edVideoInput" accept="video/*" multiple>
+    <p class="ed-hint" id="edVideoStatus"></p>
+    <div class="photo-thumbs" id="edVideoThumbs"></div>
   </div>
 
   <div class="ed-section">
@@ -313,13 +326,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <label class="ed-label">Tracklist (optional)</label>
     <div id="edTracklistRows"></div>
     <button class="ed-btn secondary" id="edAddTrack" type="button">+ Add track</button>
-  </div>
-
-  <div class="ed-section">
-    <h2>🌸 Flower Notes</h2>
-    <p class="ed-hint">Short affectionate lines — one per box.</p>
-    <div id="edFlowerRows"></div>
-    <button class="ed-btn secondary" id="edAddFlower" type="button">+ Add note</button>
   </div>
 
   <div class="ed-section">
@@ -393,6 +399,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (mime.indexOf("webp") !== -1) return "webp";
     if (mime.indexOf("mp3") !== -1 || mime.indexOf("mpeg") !== -1) return "mp3";
     if (mime.indexOf("wav") !== -1) return "wav";
+    if (mime.indexOf("video/mp4") !== -1) return "mp4";
+    if (mime.indexOf("quicktime") !== -1) return "mov";
+    if (mime.indexOf("webm") !== -1) return "webm";
     if (mime.indexOf("m4a") !== -1 || mime.indexOf("mp4") !== -1) return "m4a";
     return "bin";
   }
@@ -413,14 +422,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   var MEDIA = /*MEDIA_START*/{
     recipientName: "Friend",
     photos: [],
+    videos: [],
     happyBirthdayAudio: { src: "" },
     music: { featured: { title: "Untitled", artist: "", audioSrc: "" }, tracklist: [] },
-    flowerNotes: [
-      "You make every room warmer just by being in it.",
-      "Here's to another year of being exactly who you are.",
-      "So proud of who you're becoming. Keep going.",
-      "Still the easiest person to laugh with, no matter how far apart we are."
-    ],
     letter: { body: "" }
   }/*MEDIA_END*/;
 
@@ -437,7 +441,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (nameEl) nameEl.textContent = recipientName();
     renderPhotos();
     renderMusic();
-    renderFlowers();
+    renderVideos();
     renderFinale();
   }
 
@@ -450,7 +454,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       target.style.animation = "";
       target.classList.add("is-active");
     }
-    if (name === "flowers") animateQuotes();
     window.scrollTo({ top: 0 });
   }
   document.addEventListener("click", function (e) {
@@ -461,7 +464,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   function esc(s) { return (s == null ? "" : String(s)).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
-  var PHOTO_BG_PALETTE = ["#1A0B2E", "#2B1245", "#33122F", "#241638", "#3A1A2A", "#1F0E3D"];
+  var PHOTO_BG_PALETTE = ["#2D1B4A", "#3D2360", "#452344", "#372550", "#4A2A3E", "#301C55"];
   var photoObserver = null;
   function renderPhotos() {
     var feed = document.getElementById("photo-feed");
@@ -476,7 +479,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     }
     feed.innerHTML = photos.map(function (p, i) {
       return '<div class="photo-card" data-bg="' + PHOTO_BG_PALETTE[i % PHOTO_BG_PALETTE.length] + '">' +
-        '<img loading="lazy" alt="' + esc(p.caption || ("Photo " + (i + 1))) + '" src="' + p.src + '"></div>';
+        '<img loading="lazy" alt="' + esc(p.caption || ("Photo " + (i + 1))) + '" src="' + p.src + '">' +
+        (p.caption ? '<p class="photo-caption">' + esc(p.caption) + '</p>' : '') + '</div>';
     }).join("");
     if (view && "IntersectionObserver" in window) {
       photoObserver = new IntersectionObserver(function (entries) {
@@ -544,22 +548,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     }
   }
 
-  function renderFlowers() {
-    var stack = document.getElementById("quote-stack");
-    if (!stack) return;
-    var notes = MEDIA.flowerNotes || [];
-    stack.innerHTML = notes.length
-      ? notes.map(function (n) { return '<div class="quote-pill"><span class="quote-spark">✦</span><span>' + esc(n) + "</span></div>"; }).join("")
-      : '<div class="photo-fallback">no notes added yet</div>';
-  }
-
-  function animateQuotes() {
-    document.querySelectorAll(".quote-pill").forEach(function (el, i) {
-      el.classList.remove("is-shown");
-      void el.offsetWidth;
-      el.style.animationDelay = (i * 130) + "ms";
-      requestAnimationFrame(function () { el.classList.add("is-shown"); });
-    });
+  function renderVideos() {
+    var feed = document.getElementById("video-feed");
+    if (!feed) return;
+    var videos = MEDIA.videos || [];
+    if (!videos.length) {
+      feed.innerHTML = '<div class="photo-fallback">no videos added yet</div>';
+      return;
+    }
+    feed.innerHTML = videos.map(function (v) {
+      return '<div class="video-card"><video controls playsinline preload="metadata" src="' + v.src + '"></video></div>';
+    }).join("");
   }
 
   function cakeSVG() {
@@ -650,13 +649,21 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     (MEDIA.photos || []).forEach(function (p, i) {
       var div = document.createElement("div");
       div.className = "thumb";
-      div.innerHTML = '<img src="' + p.src + '"><button data-i="' + i + '">✕</button>';
+      div.innerHTML = '<div class="thumb-img"><img src="' + p.src + '"><button data-i="' + i + '">✕</button></div>' +
+        '<input class="thumb-caption" data-i="' + i + '" placeholder="short caption" value="' + esc(p.caption || "") + '">';
       edPhotoThumbs.appendChild(div);
     });
-    edPhotoThumbs.querySelectorAll("button").forEach(function (btn) {
+    edPhotoThumbs.querySelectorAll(".thumb-img button").forEach(function (btn) {
       btn.addEventListener("click", function () {
         MEDIA.photos.splice(parseInt(btn.getAttribute("data-i"), 10), 1);
         renderEdPhotoThumbs();
+        scheduleAutoSave();
+      });
+    });
+    edPhotoThumbs.querySelectorAll(".thumb-caption").forEach(function (inp) {
+      inp.addEventListener("input", function () {
+        var i = parseInt(inp.getAttribute("data-i"), 10);
+        if (MEDIA.photos[i]) MEDIA.photos[i].caption = inp.value;
         scheduleAutoSave();
       });
     });
@@ -864,15 +871,46 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   }
   document.getElementById("edAddTrack").addEventListener("click", function () { addTrackRow("", ""); });
 
-  var edFlowerRows = document.getElementById("edFlowerRows");
-  function addFlowerRow(text) {
-    var row = document.createElement("div");
-    row.className = "ed-row";
-    row.innerHTML = '<input class="ed-input flower-note" value="' + esc(text || "") + '"><button type="button">✕</button>';
-    row.querySelector("button").addEventListener("click", function () { row.remove(); scheduleAutoSave(); });
-    edFlowerRows.appendChild(row);
+  var edVideoThumbs = document.getElementById("edVideoThumbs");
+  function renderEdVideoThumbs() {
+    edVideoThumbs.innerHTML = "";
+    (MEDIA.videos || []).forEach(function (v, i) {
+      var div = document.createElement("div");
+      div.className = "thumb";
+      div.innerHTML = '<div class="thumb-img"><video src="' + v.src + '" muted playsinline preload="metadata"></video><button data-i="' + i + '">✕</button></div>';
+      edVideoThumbs.appendChild(div);
+    });
+    edVideoThumbs.querySelectorAll(".thumb-img button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        MEDIA.videos.splice(parseInt(btn.getAttribute("data-i"), 10), 1);
+        renderEdVideoThumbs();
+        scheduleAutoSave();
+      });
+    });
   }
-  document.getElementById("edAddFlower").addEventListener("click", function () { addFlowerRow(""); });
+  document.getElementById("edVideoInput").addEventListener("change", function (e) {
+    var files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (!files.length) return;
+    var statusEl = document.getElementById("edVideoStatus");
+    if (statusEl) statusEl.textContent = "Uploading " + files.length + " video" + (files.length === 1 ? "" : "s") + "...";
+    var i = 0;
+    function next() {
+      if (i >= files.length) {
+        if (statusEl) statusEl.textContent = "";
+        renderEdVideoThumbs();
+        scheduleAutoSave();
+        return;
+      }
+      fileToDataUrl(files[i]).then(function (rawDataUrl) { return uploadToStorage(rawDataUrl, "videos"); })
+        .then(function (finalUrl) {
+          MEDIA.videos = (MEDIA.videos || []).concat([{ src: finalUrl }]);
+          i++;
+          next();
+        });
+    }
+    next();
+  });
 
   function openEditor() {
     document.getElementById("edSiteKey").value = ensureSiteKey();
@@ -883,10 +921,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     document.getElementById("edMusicAudioStatus").textContent = (MEDIA.music.featured && MEDIA.music.featured.audioSrc) ? "✅ Audio already attached." : "No audio uploaded yet. This plays right here on the page — no Spotify or YouTube links.";
     document.getElementById("edHbdAudioStatus").textContent = (MEDIA.happyBirthdayAudio && MEDIA.happyBirthdayAudio.src) ? "✅ Audio already attached." : "No audio uploaded yet.";
     renderEdPhotoThumbs();
+    renderEdVideoThumbs();
     edTracklistRows.innerHTML = "";
     (MEDIA.music.tracklist || []).forEach(function (t) { addTrackRow(t.title, t.artist); });
-    edFlowerRows.innerHTML = "";
-    (MEDIA.flowerNotes || []).forEach(function (n) { addFlowerRow(n); });
     document.getElementById("editorOverlay").classList.add("is-open");
   }
   document.getElementById("editFab").addEventListener("click", openEditor);
@@ -899,11 +936,10 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     MEDIA.music.tracklist = Array.from(edTracklistRows.querySelectorAll(".ed-row")).map(function (row) {
       return { title: row.querySelector(".track-title").value.trim(), artist: row.querySelector(".track-artist").value.trim() };
     }).filter(function (t) { return t.title; });
-    MEDIA.flowerNotes = Array.from(edFlowerRows.querySelectorAll(".flower-note")).map(function (i) { return i.value.trim(); }).filter(Boolean);
     MEDIA.letter.body = document.getElementById("edLetter").value;
   }
 
-  // Auto-save engine: every edit (typing, adding/removing a photo, a track, a flower note)
+  // Auto-save engine: every edit (typing, adding/removing a photo, a video, a track)
   // quietly saves to both localStorage and the cloud a moment after you stop —
   // no button to remember, nothing lost on refresh or closing the tab.
   var autoSaveTimer = null;
