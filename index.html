@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Little Something For You</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 
 :root {
-  --cream: #2D1B4A;
-  --cream-light: #3C2A5E;
+  --cream: #443066;
+  --cream-light: #55407C;
   --ink: #F5EDE6;
   --ink-soft: #C9B8D9;
   --ink-dark: #2A0F1C;
-  --blush: #45315F;
-  --rose-card: #422C5C;
+  --blush: #5C4680;
+  --rose-card: #58407A;
   --lavender: #FFB7A5;
   --lavender-deep: #FFB7A5;
   --candle-btn: #E8907A;
-  --serif: 'Playfair Display', Georgia, serif;
-  --hand: 'Caveat', cursive;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --hand: 'Cormorant Garamond', Georgia, serif;
   --sans: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-slow: cubic-bezier(0.16, 0.84, 0.44, 1);
@@ -38,10 +38,10 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .view.is-active { display: flex; }
 @keyframes view-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .view-inner { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.eyebrow { font-family: var(--hand); font-size: 1.5rem; color: var(--ink); margin: 0 0 4px; }
+.eyebrow { font-family: var(--hand); font-weight: 500; font-size: 1.5rem; color: var(--ink); margin: 0 0 4px; }
 .view-title { font-family: var(--serif); font-weight: 600; font-size: 2.2rem; margin: 0 0 6px; line-height: 1.15; }
 .view-subtitle { font-family: var(--sans); font-weight: 700; font-size: 0.92rem; color: var(--ink); margin: 0 0 22px; }
-.view-subtitle.italic { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--ink-soft); }
+.view-subtitle.italic { font-family: var(--serif); font-style: normal; font-weight: 500; color: var(--ink-soft); }
 
 .pill-btn { display: inline-block; background: var(--lavender); color: var(--ink-dark); font-family: var(--sans); font-weight: 800;
   font-size: 0.82rem; letter-spacing: 0.02em; text-decoration: underline; text-underline-offset: 2px; border: none;
@@ -70,7 +70,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .icon-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
 .icon-card svg { width: 56%; height: 56%; color: var(--ink); }
 
-#view-photos { justify-content: flex-start; padding-top: 40px; background-color: var(--cream); transition: background-color 480ms var(--ease-slow); }
+#view-photos { justify-content: flex-start; padding-top: 28px; background-color: var(--cream); transition: background-color 480ms var(--ease-slow); }
 #view-photos .view-inner { max-width: 460px; }
 .photos-caption { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; margin: 0 0 18px; text-align: left; width: 100%; }
 .photo-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
@@ -80,11 +80,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center;
   backdrop-filter: blur(2px); }
 .photo-card img { display: block; width: 100%; height: auto; max-height: 68vh; border-radius: 10px; object-fit: cover; }
-.photo-caption { font-family: var(--hand); font-size: 1.1rem; color: var(--ink); margin: 10px 0 0; text-align: center; width: 100%; }
+.photo-caption { font-family: var(--hand); font-weight: 500; font-size: 1.1rem; color: var(--ink); margin: 10px 0 0; text-align: center; width: 100%; }
 .photo-fallback { width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; background: var(--cream-light); display: flex;
-  align-items: center; justify-content: center; font-family: var(--hand); font-size: 1.1rem; color: var(--ink-soft); }
+  align-items: center; justify-content: center; font-family: var(--hand); font-weight: 500; font-size: 1.1rem; color: var(--ink-soft); }
 
-#view-videos { justify-content: flex-start; padding-top: 40px; }
+#view-videos { justify-content: flex-start; padding-top: 28px; }
 #view-videos .view-inner { max-width: 460px; }
 .videos-caption { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; margin: 0 0 18px; text-align: left; width: 100%; }
 .video-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
@@ -132,7 +132,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   text-align: left; opacity: 0; transform: translateY(14px); }
 .letter-card.is-in { animation: letter-in 620ms var(--ease-slow) forwards; }
 @keyframes letter-in { to { opacity: 1; transform: translateY(0); } }
-.letter-body { font-family: var(--hand); font-size: 1.28rem; line-height: 1.5; white-space: pre-wrap; max-height: 46vh; overflow-y: auto; }
+.letter-body { font-family: var(--hand); font-weight: 500; font-size: 1.28rem; line-height: 1.5; white-space: pre-wrap; max-height: 46vh; overflow-y: auto; }
 .letter-body::-webkit-scrollbar { width: 5px; }
 .letter-body::-webkit-scrollbar-thumb { background: var(--lavender); border-radius: 10px; }
 @media (max-width: 380px) { .view-title { font-size: 1.9rem; } #view-landing .view-title { font-size: 2rem; } }
@@ -153,7 +153,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .ed-input, .ed-textarea { width: 100%; padding: 9px 11px; border: 1px solid rgba(245,237,230,0.25); border-radius: 8px; font-family: var(--sans);
   font-size: 0.9rem; background: var(--cream-light); color: var(--ink); }
 .ed-input::placeholder, .ed-textarea::placeholder { color: rgba(245,237,230,0.4); }
-.ed-textarea { min-height: 90px; resize: vertical; font-family: var(--hand); font-size: 1.1rem; }
+.ed-textarea { min-height: 90px; resize: vertical; font-family: var(--hand); font-weight: 500; font-size: 1.1rem; }
 .ed-row { display: flex; gap: 8px; margin-bottom: 6px; }
 .ed-row input { flex: 1; }
 .ed-row button { background: rgba(245,237,230,0.14); color: var(--ink); border: none; border-radius: 6px; width: 30px; cursor: pointer; }
@@ -187,7 +187,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .crop-hint { color: var(--ink-soft); font-size: 0.8rem; margin-top: 10px; text-align: center; }
 </style>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2D1B4A">
+<meta name="theme-color" content="#443066">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -238,7 +238,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   <section class="view" id="view-photos">
     <div class="view-inner">
-      <h1 class="view-title">photos</h1>
       <p class="photos-caption">a few of my favorites — swipe to see more →</p>
       <div class="photo-feed" id="photo-feed"></div>
     </div>
@@ -256,7 +255,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   <section class="view" id="view-videos">
     <div class="view-inner">
-      <h1 class="view-title">videos</h1>
       <p class="videos-caption">a few little moments — swipe to see more →</p>
       <div class="video-feed" id="video-feed"></div>
     </div>
@@ -370,6 +368,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   var SITE_KEY_STORAGE = "bdaySiteKey";
   function getSiteKey() { try { return localStorage.getItem(SITE_KEY_STORAGE) || ""; } catch (e) { return ""; } }
   function setSiteKeyStorage(v) { try { localStorage.setItem(SITE_KEY_STORAGE, v); } catch (e) {} }
+  // Tracks when THIS device last saved a change locally, so that on page load we never let
+  // an older cloud copy silently overwrite an edit that hasn't finished syncing yet — this is
+  // what was making freshly-typed photo captions (and freshly-added videos) vanish on refresh.
+  var LOCAL_SAVED_AT_KEY = "bdaySiteSavedAt";
+  function getLocalSavedAt() { try { return parseInt(localStorage.getItem(LOCAL_SAVED_AT_KEY) || "0", 10); } catch (e) { return 0; } }
+  function setLocalSavedAt(ts) { try { localStorage.setItem(LOCAL_SAVED_AT_KEY, String(ts)); } catch (e) {} }
   function ensureSiteKey() {
     var key = getSiteKey();
     if (!key) {
@@ -445,7 +449,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     renderFinale();
   }
 
-  function showView(name) {
+  function showView(name, fromPopState) {
     document.querySelectorAll(".view").forEach(function (el) { el.classList.remove("is-active"); });
     var target = document.getElementById("view-" + name);
     if (target) {
@@ -455,16 +459,37 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       target.classList.add("is-active");
     }
     window.scrollTo({ top: 0 });
+    // Push a history entry for every real navigation (not for ones triggered by the back
+    // button itself) so the phone's back button/gesture steps back through the app's own
+    // pages instead of immediately closing it.
+    if (!fromPopState) {
+      history.pushState({ view: name }, "", "#" + name);
+    }
   }
   document.addEventListener("click", function (e) {
     var btn = e.target.closest("[data-goto]");
     if (!btn) return;
     showView(btn.getAttribute("data-goto"));
   });
+  history.replaceState({ view: "landing" }, "", "#landing");
+  window.addEventListener("popstate", function (e) {
+    var editorOverlay = document.getElementById("editorOverlay");
+    if (editorOverlay.classList.contains("is-open")) {
+      editorOverlay.classList.remove("is-open");
+      return;
+    }
+    var cropOverlay = document.getElementById("cropModalOverlay");
+    if (cropOverlay.classList.contains("is-open")) {
+      cropOverlay.classList.remove("is-open");
+      return;
+    }
+    var name = (e.state && e.state.view) || "landing";
+    showView(name, true);
+  });
 
   function esc(s) { return (s == null ? "" : String(s)).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
-  var PHOTO_BG_PALETTE = ["#2D1B4A", "#3D2360", "#452344", "#372550", "#4A2A3E", "#301C55"];
+  var PHOTO_BG_PALETTE = ["#443066", "#523A7A", "#5A3958", "#4C3B6C", "#5E3E56", "#4A3670"];
   var photoObserver = null;
   function renderPhotos() {
     var feed = document.getElementById("photo-feed");
@@ -569,7 +594,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       '<rect x="106" y="64" width="8" height="20" fill="#F8F0E1" stroke="#221D17" stroke-width="1.4"/>' +
       '<path d="M62 92 Q66 86 70 92 Q74 86 78 92 Q82 86 86 92 Q90 86 94 92 Q98 86 102 92 Q106 86 110 92 Q114 86 118 92 Q122 86 126 92 Q130 86 134 92 Q138 86 142 92 Q146 86 150 92 Q154 86 158 92" fill="none" stroke="#221D17" stroke-width="1.4"/>' +
       '<rect x="62" y="92" width="96" height="34" rx="3" fill="#F8F0E1" stroke="#221D17" stroke-width="1.4"/>' +
-      '<text x="110" y="114" text-anchor="middle" font-family="Caveat, cursive" font-size="15" fill="#221D17">Happy Birthday</text>' +
+      '<text x="110" y="114" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="15" fill="#221D17">Happy Birthday</text>' +
       '<path d="M40 126 Q45 119 50 126 Q55 119 60 126 Q65 119 70 126 Q75 119 80 126 Q85 119 90 126 Q95 119 100 126 Q105 119 110 126 Q115 119 120 126 Q125 119 130 126 Q135 119 140 126 Q145 119 150 126 Q155 119 160 126 Q165 119 170 126 Q175 119 180 126" fill="none" stroke="#221D17" stroke-width="1.4"/>' +
       '<rect x="40" y="126" width="140" height="46" rx="3" fill="#F8F0E1" stroke="#221D17" stroke-width="1.4"/>' +
       '<ellipse cx="110" cy="176" rx="80" ry="8" fill="#F8F0E1" stroke="#221D17" stroke-width="1.4"/></svg>';
@@ -893,18 +918,30 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     e.target.value = "";
     if (!files.length) return;
     var statusEl = document.getElementById("edVideoStatus");
-    if (statusEl) statusEl.textContent = "Uploading " + files.length + " video" + (files.length === 1 ? "" : "s") + "...";
+    var total = files.length;
     var i = 0;
     function next() {
-      if (i >= files.length) {
-        if (statusEl) statusEl.textContent = "";
-        renderEdVideoThumbs();
-        scheduleAutoSave();
+      if (i >= total) {
+        if (statusEl) statusEl.textContent = "✅ All videos added.";
         return;
+      }
+      if (statusEl) {
+        statusEl.textContent = "Uploading video " + (i + 1) + " of " + total +
+          " — larger clips can take a minute or two on mobile data, please keep this page open until it finishes...";
       }
       fileToDataUrl(files[i]).then(function (rawDataUrl) { return uploadToStorage(rawDataUrl, "videos"); })
         .then(function (finalUrl) {
+          // Saved to this device the moment each clip finishes (not just at the end of the
+          // whole batch) — so if the page gets closed or refreshed partway through, the
+          // videos already uploaded aren't lost.
           MEDIA.videos = (MEDIA.videos || []).concat([{ src: finalUrl }]);
+          renderEdVideoThumbs();
+          scheduleAutoSave();
+          i++;
+          next();
+        })
+        .catch(function () {
+          if (statusEl) statusEl.textContent = "Video " + (i + 1) + " of " + total + " couldn't be read — skipping it and continuing.";
           i++;
           next();
         });
@@ -925,9 +962,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     edTracklistRows.innerHTML = "";
     (MEDIA.music.tracklist || []).forEach(function (t) { addTrackRow(t.title, t.artist); });
     document.getElementById("editorOverlay").classList.add("is-open");
+    history.pushState({ editor: true }, "", "#edit");
   }
   document.getElementById("editFab").addEventListener("click", openEditor);
-  document.getElementById("edClose").addEventListener("click", function () { document.getElementById("editorOverlay").classList.remove("is-open"); });
+  document.getElementById("edClose").addEventListener("click", function () {
+    document.getElementById("editorOverlay").classList.remove("is-open");
+    if (history.state && history.state.editor) history.back();
+  });
 
   function collectFromEditor() {
     MEDIA.recipientName = document.getElementById("edName").value.trim() || "Friend";
@@ -946,6 +987,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   function scheduleAutoSave() {
     collectFromEditor();
     try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+    setLocalSavedAt(Date.now());
     var statusEl = document.getElementById("edCloudStatus");
     if (statusEl) statusEl.textContent = "Saving...";
     clearTimeout(autoSaveTimer);
@@ -957,11 +999,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         if (statusEl) statusEl.textContent = "Saved on this device only — too large for cloud backup right now. Tap \"Shrink Already-Added Photos\" above.";
         return;
       }
-      supa.from("birthday_sites").upsert({ site_key: key, data: MEDIA, updated_at: new Date().toISOString() })
+      var nowIso = new Date().toISOString();
+      supa.from("birthday_sites").upsert({ site_key: key, data: MEDIA, updated_at: nowIso })
         .then(function (res) {
-          if (!statusEl) return;
-          if (res.error) { statusEl.textContent = "Saved on this device only — cloud save failed: " + res.error.message; return; }
-          statusEl.textContent = "✅ All changes saved.";
+          if (res.error) { if (statusEl) statusEl.textContent = "Saved on this device only — cloud save failed: " + res.error.message; return; }
+          setLocalSavedAt(new Date(nowIso).getTime());
+          if (statusEl) statusEl.textContent = "✅ All changes saved.";
         })
         .catch(function () {
           // A network-level failure (timeout, dropped connection, payload rejected outright)
@@ -983,7 +1026,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
     renderAll();
     document.getElementById("editorOverlay").classList.remove("is-open");
-    showView("landing");
+    if (history.state && history.state.editor) {
+      // Swap the "editor" history entry for "landing" instead of stacking a new one,
+      // so the back button doesn't need an extra press to actually leave the site.
+      history.replaceState({ view: "landing" }, "", "#landing");
+      showView("landing", true);
+    } else {
+      showView("landing");
+    }
     document.getElementById("edStatus").textContent = "";
   });
 
@@ -993,13 +1043,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (!key) { statusEl.textContent = "Type the site key to load."; return; }
     if (!supa) { statusEl.textContent = "Couldn't connect — check your internet connection."; return; }
     statusEl.textContent = "Loading...";
-    supa.from("birthday_sites").select("data").eq("site_key", key).maybeSingle()
+    supa.from("birthday_sites").select("data, updated_at").eq("site_key", key).maybeSingle()
       .then(function (res) {
         if (res.error) { statusEl.textContent = "Couldn't load: " + res.error.message; return; }
         if (!res.data) { statusEl.textContent = "Nothing saved yet under that key."; return; }
         MEDIA = res.data.data;
         setSiteKeyStorage(key);
         try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+        setLocalSavedAt(res.data.updated_at ? new Date(res.data.updated_at).getTime() : Date.now());
         renderAll();
         openEditor();
         statusEl.textContent = "✅ Loaded from cloud.";
@@ -1037,14 +1088,20 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   // Always pull the latest cloud copy on open, the same way Haki's Archive does — so
   // whatever you last saved is there automatically, on this device or any other,
-  // without needing to remember to tap Load.
+  // without needing to remember to tap Load. But if THIS device has a local edit that
+  // hasn't finished syncing to the cloud yet (e.g. you just added a caption or a video
+  // and refreshed within a second or two), the cloud copy is older — don't let it
+  // clobber the newer local one.
   ensureSiteKey();
   if (supa) {
-    supa.from("birthday_sites").select("data").eq("site_key", getSiteKey()).maybeSingle()
+    supa.from("birthday_sites").select("data, updated_at").eq("site_key", getSiteKey()).maybeSingle()
       .then(function (res) {
         if (res.error || !res.data) return; // nothing saved yet, or offline — keep what's local
+        var cloudTs = res.data.updated_at ? new Date(res.data.updated_at).getTime() : 0;
+        if (cloudTs <= getLocalSavedAt()) return; // local is at least as fresh — keep it
         MEDIA = res.data.data;
         try { localStorage.setItem("bdaySiteMedia", JSON.stringify(MEDIA)); } catch (e) {}
+        setLocalSavedAt(cloudTs);
         renderAll();
       })
       .catch(function () {});
