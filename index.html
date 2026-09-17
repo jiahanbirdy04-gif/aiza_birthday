@@ -8,21 +8,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 
 :root {
-  --cream: #EFE6D8;
-  --cream-light: #FAF6EE;
-  --ink: #2B211C;
-  --ink-soft: #6B5E52;
-  --blush: #EBD9D3;
-  --rose-card: #F0DAD2;
-  --lavender: #9C5B6E;
-  --lavender-deep: #6E3A48;
-  --candle-btn: #A9695F;
-  --leaf: #5C7A4E;
-  --rose-red: #8C2A2A;
-  --rose-red-deep: #6B1F1F;
-  --kraft: #D8B888;
-  --kraft-line: #8A6A3E;
-  --gold: #B8925A;
+  --cream: #1A0B2E;
+  --cream-light: #2A1B45;
+  --ink: #F5EDE6;
+  --ink-soft: #C9B8D9;
+  --ink-dark: #2A0F1C;
+  --blush: #35234F;
+  --rose-card: #33204F;
+  --lavender: #FFB7A5;
+  --lavender-deep: #FFB7A5;
+  --candle-btn: #E8907A;
   --serif: 'Playfair Display', Georgia, serif;
   --hand: 'Caveat', cursive;
   --sans: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -48,11 +43,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .view-subtitle { font-family: var(--sans); font-weight: 700; font-size: 0.92rem; color: var(--ink); margin: 0 0 22px; }
 .view-subtitle.italic { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--ink-soft); }
 
-.pill-btn { display: inline-block; background: var(--lavender); color: var(--ink); font-family: var(--sans); font-weight: 800;
+.pill-btn { display: inline-block; background: var(--lavender); color: var(--ink-dark); font-family: var(--sans); font-weight: 800;
   font-size: 0.82rem; letter-spacing: 0.02em; text-decoration: underline; text-underline-offset: 2px; border: none;
   border-radius: 999px; padding: 11px 26px; cursor: pointer; transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
-  box-shadow: 0 4px 12px rgba(154, 108, 184, 0.28); }
-.pill-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(154, 108, 184, 0.36); }
+  box-shadow: 0 4px 14px rgba(255, 183, 165, 0.32); }
+.pill-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 183, 165, 0.42); }
 .pill-btn.is-candle { background: var(--candle-btn); box-shadow: 0 4px 12px rgba(192, 139, 133, 0.32); }
 
 .back-link { position: absolute; right: 24px; bottom: 22px; font-family: var(--sans); font-weight: 700; font-size: 0.86rem;
@@ -70,46 +65,58 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 #view-menu .view-subtitle.italic { margin-bottom: 26px; }
 .icon-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; }
 .icon-card { aspect-ratio: 1 / 1; background: var(--cream-light); border: none; border-radius: 14px; display: flex;
-  align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(34, 29, 23, 0.08);
+  align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   transition: transform 200ms var(--ease), box-shadow 200ms var(--ease); }
-.icon-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(34, 29, 23, 0.14); }
+.icon-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
 .icon-card svg { width: 56%; height: 56%; color: var(--ink); }
 
-#view-photos { justify-content: flex-start; padding-top: 40px; }
+#view-photos { justify-content: flex-start; padding-top: 40px; background-color: var(--cream); transition: background-color 480ms var(--ease-slow); }
 #view-photos .view-inner { max-width: 460px; }
 .photos-caption { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; margin: 0 0 18px; text-align: left; width: 100%; }
 .photo-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; padding: 6px 6px 22px; margin: 0 -6px; scrollbar-width: none; }
 .photo-feed::-webkit-scrollbar { display: none; }
-.photo-card { flex: 0 0 78%; max-width: 320px; scroll-snap-align: center; background: var(--rose-card); border-radius: 16px;
-  padding: 14px; box-shadow: 0 8px 20px rgba(34, 29, 23, 0.14); display: flex; align-items: center; justify-content: center; }
+.photo-card { flex: 0 0 78%; max-width: 320px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
+  padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(2px); }
 .photo-card img { display: block; width: 100%; height: auto; max-height: 62vh; border-radius: 10px; object-fit: cover; }
 .photo-fallback { width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; background: var(--cream-light); display: flex;
   align-items: center; justify-content: center; font-family: var(--hand); font-size: 1.1rem; color: var(--ink-soft); }
 
 .music-card { width: 100%; background: var(--blush); border-radius: 16px; padding: 26px 22px 20px; display: flex;
-  flex-direction: column; align-items: center; box-shadow: 0 8px 22px rgba(34, 29, 23, 0.10); }
+  flex-direction: column; align-items: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
+.disc-wrap { display: flex; justify-content: center; margin-bottom: 18px; }
+.disc { width: 118px; height: 118px; border-radius: 50%; position: relative;
+  background: radial-gradient(circle at 50% 50%, var(--cream-light) 0 26%, var(--lavender) 27% 30%, var(--cream) 31% 60%, var(--lavender-deep) 61% 64%, var(--cream) 65% 100%);
+  border: 3px solid var(--lavender); box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+  animation: disc-spin 5.5s linear infinite; animation-play-state: paused; }
+.disc.is-spinning { animation-play-state: running; }
+.disc-center { position: absolute; top: 50%; left: 50%; width: 13px; height: 13px; border-radius: 50%; background: var(--ink-dark); transform: translate(-50%, -50%); }
+@keyframes disc-spin { to { transform: rotate(360deg); } }
 .scrubber { width: 100%; display: flex; align-items: center; margin-bottom: 6px; cursor: pointer; }
-.scrubber input[type="range"] { width: 100%; accent-color: var(--ink); }
+.scrubber input[type="range"] { width: 100%; accent-color: var(--lavender); }
 .player-controls { display: flex; align-items: center; justify-content: center; gap: 22px; margin: 10px 0 14px; }
 .player-controls button { background: none; border: none; cursor: pointer; color: var(--ink); display: flex; align-items: center; justify-content: center; }
 .player-controls svg { width: 22px; height: 22px; }
-.play-btn { width: 52px; height: 52px; border-radius: 50%; background: var(--ink) !important; color: var(--blush) !important; }
+.play-btn { width: 52px; height: 52px; border-radius: 50%; background: var(--lavender) !important; color: var(--ink-dark) !important; }
 .play-btn svg { width: 22px; height: 22px; }
 .music-title { font-family: var(--serif); font-weight: 600; font-size: 1.2rem; margin: 0; }
 .music-artist { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-soft); margin: 2px 0 0; }
 .tracklist { list-style: none; margin: 18px 0 0; padding: 0; width: 100%; }
-.tracklist li { display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px dashed rgba(34,29,23,0.15); font-size: 0.84rem; text-align: left; }
+.tracklist li { display: flex; justify-content: space-between; padding: 8px 2px; border-bottom: 1px dashed rgba(245,237,230,0.18); font-size: 0.84rem; text-align: left; }
 .tracklist .t-title { font-weight: 700; }
 .tracklist .t-artist { color: var(--ink-soft); }
 
-.quote-stack { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; margin-bottom: 20px; }
-.quote-pill { background: var(--lavender); color: var(--ink); font-family: var(--sans); font-weight: 700; font-size: 0.9rem;
-  border-radius: 4px; padding: 10px 16px; opacity: 0; transform: translateY(8px); }
-.quote-pill.is-shown { animation: quote-in 520ms var(--ease-slow) forwards; }
-@keyframes quote-in { to { opacity: 1; transform: translateY(0); } }
-.bouquet-wrap { width: 100%; display: flex; justify-content: center; margin-top: 4px; }
-.bouquet-wrap svg { width: min(300px, 82%); height: auto; }
+.quote-stack { display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; margin-bottom: 8px; }
+.quote-pill { display: flex; align-items: center; gap: 10px; background: var(--lavender); color: var(--ink-dark);
+  font-family: var(--sans); font-weight: 700; font-size: 0.92rem; border-radius: 14px; padding: 13px 18px; text-align: left;
+  opacity: 0; transform: translateY(14px) scale(0.94); box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease); }
+.quote-pill:hover, .quote-pill:active { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 22px rgba(0,0,0,0.45); }
+.quote-pill.is-shown { animation: quote-in 560ms var(--ease-slow) forwards; }
+@keyframes quote-in { to { opacity: 1; transform: translateY(0) scale(1); } }
+.quote-spark { flex: 0 0 auto; font-size: 1.05rem; display: inline-block; animation: spark-pulse 2.4s ease-in-out infinite; }
+@keyframes spark-pulse { 0%, 100% { transform: scale(0.85) rotate(-6deg); opacity: 0.7; } 50% { transform: scale(1.08) rotate(6deg); opacity: 1; } }
 
 #view-finale .cake-card { margin-bottom: 8px; }
 .cake-wrap { width: 130px; height: 130px; position: relative; }
@@ -130,27 +137,28 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 @media (max-width: 380px) { .view-title { font-size: 1.9rem; } #view-landing .view-title { font-size: 2rem; } }
 
 /* ---------------- Editor (only you see this) ---------------- */
-#editFab { position: fixed; bottom: 18px; right: 18px; width: 48px; height: 48px; border-radius: 50%; background: var(--ink);
-  color: var(--cream-light); border: none; font-size: 20px; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.3); z-index: 500; }
+#editFab { position: fixed; bottom: 18px; right: 18px; width: 48px; height: 48px; border-radius: 50%; background: var(--lavender);
+  color: var(--ink-dark); border: none; font-size: 20px; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.45); z-index: 500; }
 #editorOverlay { display: none; position: fixed; inset: 0; background: var(--cream-light); z-index: 600; overflow-y: auto;
   padding: 20px 18px 100px; font-family: var(--sans); }
 #editorOverlay.is-open { display: block; }
 .ed-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-.ed-head h1 { font-family: var(--serif); font-size: 1.5rem; margin: 0; }
+.ed-head h1 { font-family: var(--serif); font-size: 1.5rem; margin: 0; color: var(--ink); }
 .ed-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink); }
-.ed-section { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.ed-section h2 { font-family: var(--serif); font-size: 1.1rem; margin: 0 0 10px; }
+.ed-section { background: var(--rose-card); border-radius: 14px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+.ed-section h2 { font-family: var(--serif); font-size: 1.1rem; margin: 0 0 10px; color: var(--ink); }
 .ed-label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); text-transform: uppercase;
   letter-spacing: 0.03em; margin: 10px 0 4px; }
-.ed-input, .ed-textarea { width: 100%; padding: 9px 11px; border: 1px solid #ddd; border-radius: 8px; font-family: var(--sans);
-  font-size: 0.9rem; background: var(--cream-light); }
+.ed-input, .ed-textarea { width: 100%; padding: 9px 11px; border: 1px solid rgba(245,237,230,0.25); border-radius: 8px; font-family: var(--sans);
+  font-size: 0.9rem; background: var(--cream-light); color: var(--ink); }
+.ed-input::placeholder, .ed-textarea::placeholder { color: rgba(245,237,230,0.4); }
 .ed-textarea { min-height: 90px; resize: vertical; font-family: var(--hand); font-size: 1.1rem; }
 .ed-row { display: flex; gap: 8px; margin-bottom: 6px; }
 .ed-row input { flex: 1; }
-.ed-row button { background: #eee; border: none; border-radius: 6px; width: 30px; cursor: pointer; }
-.ed-btn { background: var(--lavender); border: none; border-radius: 8px; padding: 9px 16px; font-weight: 800; cursor: pointer; margin-top: 8px; }
-.ed-btn.secondary { background: #eee; }
-.ed-btn.danger { background: #f3d4d4; }
+.ed-row button { background: rgba(245,237,230,0.14); color: var(--ink); border: none; border-radius: 6px; width: 30px; cursor: pointer; }
+.ed-btn { background: var(--lavender); color: var(--ink-dark); border: none; border-radius: 8px; padding: 9px 16px; font-weight: 800; cursor: pointer; margin-top: 8px; }
+.ed-btn.secondary { background: rgba(245,237,230,0.16); }
+.ed-btn.danger { background: #f3b8ae; }
 .photo-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .photo-thumbs .thumb { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; }
 .photo-thumbs .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -158,9 +166,24 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; line-height: 1; }
 #edStatus { font-size: 0.85rem; color: var(--ink-soft); margin-top: 10px; min-height: 18px; }
 .ed-hint { font-size: 0.78rem; color: var(--ink-soft); margin: 0 0 8px; }
+
+/* ---------------- Photo crop tool ---------------- */
+.crop-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10, 4, 20, 0.9); z-index: 700;
+  align-items: center; justify-content: center; flex-direction: column; padding: 24px 18px; }
+.crop-modal-overlay.is-open { display: flex; }
+.crop-title { font-family: var(--serif); color: var(--ink); font-size: 1.1rem; margin: 0 0 14px; }
+.crop-viewport { width: min(78vw, 320px); height: min(78vw, 320px); border-radius: 16px; overflow: hidden; position: relative;
+  background: #000; touch-action: none; box-shadow: 0 10px 30px rgba(0,0,0,0.55); border: 2px solid var(--lavender); cursor: grab; }
+.crop-viewport:active { cursor: grabbing; }
+.crop-viewport img { position: absolute; top: 0; left: 0; transform-origin: 0 0; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+.crop-zoom-row { display: flex; align-items: center; gap: 10px; width: min(78vw, 320px); margin-top: 16px; }
+.crop-zoom-row input[type="range"] { flex: 1; accent-color: var(--lavender); }
+.crop-zoom-row span { font-size: 1rem; }
+.crop-actions { display: flex; flex-direction: column; gap: 10px; width: min(78vw, 320px); margin-top: 18px; }
+.crop-hint { color: var(--ink-soft); font-size: 0.8rem; margin-top: 10px; text-align: center; }
 </style>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#B98FD1">
+<meta name="theme-color" content="#1A0B2E">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -176,11 +199,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       <h1 class="view-title" id="landing-name">Friend</h1>
       <button class="gift-box-btn" data-goto="menu" aria-label="Open your gift">
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="12" y="42" width="76" height="46" rx="3" fill="#9C5B6E" stroke="#2B211C" stroke-width="2"/>
-          <rect x="8" y="30" width="84" height="16" rx="3" fill="#6E3A48" stroke="#2B211C" stroke-width="2"/>
-          <rect x="44" y="30" width="12" height="58" fill="#D8B888" stroke="#2B211C" stroke-width="1.5"/>
-          <path d="M50 30 C 30 22, 22 6, 36 4 C 48 2, 50 20, 50 30 Z" fill="#D8B888" stroke="#2B211C" stroke-width="2"/>
-          <path d="M50 30 C 70 22, 78 6, 64 4 C 52 2, 50 20, 50 30 Z" fill="#D8B888" stroke="#2B211C" stroke-width="2"/>
+          <rect x="12" y="42" width="76" height="46" rx="3" fill="#FFB7A5" stroke="#2A0F1C" stroke-width="2"/>
+          <rect x="8" y="30" width="84" height="16" rx="3" fill="#E8907A" stroke="#2A0F1C" stroke-width="2"/>
+          <rect x="44" y="30" width="12" height="58" fill="#F5EDE6" stroke="#2A0F1C" stroke-width="1.5"/>
+          <path d="M50 30 C 30 22, 22 6, 36 4 C 48 2, 50 20, 50 30 Z" fill="#F5EDE6" stroke="#2A0F1C" stroke-width="2"/>
+          <path d="M50 30 C 70 22, 78 6, 64 4 C 52 2, 50 20, 50 30 Z" fill="#F5EDE6" stroke="#2A0F1C" stroke-width="2"/>
         </svg>
         <span class="pill-btn">tap to open</span>
       </button>
@@ -231,7 +254,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <div class="view-inner">
       <h1 class="view-title">flowers</h1>
       <div class="quote-stack" id="quote-stack"></div>
-      <div class="bouquet-wrap" id="bouquet-wrap"></div>
     </div>
     <button class="back-link" data-goto="menu">back</button>
   </section>
@@ -273,6 +295,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   <div class="ed-section">
     <h2>📷 Photos</h2>
+    <p class="ed-hint">Each photo opens a crop tool before it's added — drag to reposition, use the slider to zoom.</p>
     <input type="file" id="edPhotoInput" accept="image/*" multiple>
     <button class="ed-btn secondary" id="edCompressExisting" type="button" style="margin-top:8px">🗜️ Shrink Already-Added Photos</button>
     <div class="photo-thumbs" id="edPhotoThumbs"></div>
@@ -284,11 +307,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <input class="ed-input" id="edMusicTitle" placeholder="e.g. Some Way">
     <label class="ed-label">Artist</label>
     <input class="ed-input" id="edMusicArtist" placeholder="e.g. Ben&Ben">
-    <label class="ed-label">Upload the audio file (optional)</label>
+    <label class="ed-label">Upload the audio file</label>
     <input type="file" id="edMusicAudioInput" accept="audio/*">
-    <p class="ed-hint" id="edMusicAudioStatus">No audio uploaded yet.</p>
-    <label class="ed-label">...or paste an embed URL instead (Spotify/YouTube embed link)</label>
-    <input class="ed-input" id="edMusicEmbed" placeholder="https://open.spotify.com/embed/...">
+    <p class="ed-hint" id="edMusicAudioStatus">No audio uploaded yet. This plays right here on the page — no Spotify or YouTube links.</p>
     <label class="ed-label">Tracklist (optional)</label>
     <div id="edTracklistRows"></div>
     <button class="ed-btn secondary" id="edAddTrack" type="button">+ Add track</button>
@@ -299,10 +320,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <p class="ed-hint">Short affectionate lines — one per box.</p>
     <div id="edFlowerRows"></div>
     <button class="ed-btn secondary" id="edAddFlower" type="button">+ Add note</button>
-    <label class="ed-label">Bouquet image</label>
-    <p class="ed-hint">Upload your own bouquet picture (a screenshot, a saved image, anything) — it'll replace the plain default drawing. Skip this and the default stays.</p>
-    <input type="file" id="edBouquetInput" accept="image/*">
-    <div id="edBouquetPreview" style="margin-top:8px"></div>
   </div>
 
   <div class="ed-section">
@@ -317,6 +334,23 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   <button class="ed-btn" id="edPreview" type="button">👁 Preview</button>
   <button class="ed-btn" id="edDownload" type="button">📥 Download Website (send this file)</button>
   <div id="edStatus"></div>
+</div>
+
+<div class="crop-modal-overlay" id="cropModalOverlay">
+  <p class="crop-title">Crop this photo</p>
+  <div class="crop-viewport" id="cropViewport">
+    <img id="cropImg" alt="">
+  </div>
+  <div class="crop-zoom-row">
+    <span>🔍</span>
+    <input type="range" id="cropZoom" min="1" max="3" step="0.01" value="1">
+  </div>
+  <div class="crop-actions">
+    <button class="ed-btn" id="cropUseBtn" type="button">✂️ Crop &amp; Add</button>
+    <button class="ed-btn secondary" id="cropUseOriginalBtn" type="button">Use Without Cropping</button>
+    <button class="ed-btn secondary" id="cropSkipBtn" type="button">Skip This Photo</button>
+  </div>
+  <p class="crop-hint">Drag inside the frame to reposition</p>
 </div>
 
 <script>
@@ -380,7 +414,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     recipientName: "Friend",
     photos: [],
     happyBirthdayAudio: { src: "" },
-    music: { featured: { title: "Untitled", artist: "", embedUrl: "", audioSrc: "" }, tracklist: [] },
+    music: { featured: { title: "Untitled", artist: "", audioSrc: "" }, tracklist: [] },
     flowerNotes: [
       "You make every room warmer just by being in it.",
       "Here's to another year of being exactly who you are.",
@@ -427,16 +461,36 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   function esc(s) { return (s == null ? "" : String(s)).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
+  var PHOTO_BG_PALETTE = ["#1A0B2E", "#2B1245", "#33122F", "#241638", "#3A1A2A", "#1F0E3D"];
+  var photoObserver = null;
   function renderPhotos() {
     var feed = document.getElementById("photo-feed");
+    var view = document.getElementById("view-photos");
     if (!feed) return;
     var photos = MEDIA.photos || [];
-    if (!photos.length) { feed.innerHTML = '<div class="photo-fallback">no photos added yet</div>'; return; }
-    var cardBgs = ["#F0DAD2", "#EBD9D3", "#E3CFC0", "#DCC6B4"];
+    if (photoObserver) { photoObserver.disconnect(); photoObserver = null; }
+    if (!photos.length) {
+      feed.innerHTML = '<div class="photo-fallback">no photos added yet</div>';
+      if (view) view.style.backgroundColor = "var(--cream)";
+      return;
+    }
     feed.innerHTML = photos.map(function (p, i) {
-      return '<div class="photo-card" style="background:' + cardBgs[i % cardBgs.length] + '">' +
+      return '<div class="photo-card" data-bg="' + PHOTO_BG_PALETTE[i % PHOTO_BG_PALETTE.length] + '">' +
         '<img loading="lazy" alt="' + esc(p.caption || ("Photo " + (i + 1))) + '" src="' + p.src + '"></div>';
     }).join("");
+    if (view && "IntersectionObserver" in window) {
+      photoObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+            view.style.backgroundColor = entry.target.getAttribute("data-bg");
+          }
+        });
+      }, { root: feed, threshold: [0.6] });
+      Array.prototype.forEach.call(feed.querySelectorAll(".photo-card"), function (card) {
+        photoObserver.observe(card);
+      });
+      view.style.backgroundColor = PHOTO_BG_PALETTE[0];
+    }
   }
 
   function renderMusic() {
@@ -451,6 +505,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
     if (f.audioSrc) {
       card.innerHTML =
+        '<div class="disc-wrap"><div class="disc" id="music-disc"><div class="disc-center"></div></div></div>' +
         '<div class="scrubber"><input type="range" id="music-seek" min="0" max="100" value="0" step="0.1" aria-label="Seek"></div>' +
         '<div class="player-controls">' +
         '<button id="music-prev" aria-label="Restart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM20 6v12l-8.5-6z"/></svg></button>' +
@@ -463,17 +518,26 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       var seek = document.getElementById("music-seek");
       var playBtn = document.getElementById("music-play");
       var playIcon = document.getElementById("music-play-icon");
+      var disc = document.getElementById("music-disc");
       audio.addEventListener("loadedmetadata", function () { seek.max = audio.duration || 100; });
       audio.addEventListener("timeupdate", function () { if (!seek.matches(":active")) seek.value = audio.currentTime; });
+      audio.addEventListener("ended", function () {
+        playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        if (disc) disc.classList.remove("is-spinning");
+      });
       seek.addEventListener("input", function () { audio.currentTime = seek.value; });
       playBtn.addEventListener("click", function () {
-        if (audio.paused) { audio.play().catch(function () {}); playIcon.innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'; }
-        else { audio.pause(); playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; }
+        if (audio.paused) {
+          audio.play().catch(function () {});
+          playIcon.innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+          if (disc) disc.classList.add("is-spinning");
+        } else {
+          audio.pause();
+          playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+          if (disc) disc.classList.remove("is-spinning");
+        }
       });
       document.getElementById("music-prev").addEventListener("click", function () { audio.currentTime = 0; });
-    } else if (f.embedUrl) {
-      card.innerHTML = '<iframe src="' + esc(f.embedUrl) + '" style="width:100%;min-height:152px;border:none;border-radius:10px;" allow="autoplay; encrypted-media" loading="lazy"></iframe>' +
-        '<p class="music-title" style="margin-top:14px;">' + esc(f.title || "Untitled") + '</p><p class="music-artist">' + esc(f.artist || "") + "</p>" + tracklistHTML;
     } else {
       card.innerHTML = '<div class="player-controls"><button class="play-btn" disabled aria-label="No audio yet"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button></div>' +
         '<p class="music-title">' + esc(f.title || "Untitled") + '</p><p class="music-artist">' + esc(f.artist || "") + "</p>" + tracklistHTML;
@@ -482,17 +546,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   function renderFlowers() {
     var stack = document.getElementById("quote-stack");
+    if (!stack) return;
     var notes = MEDIA.flowerNotes || [];
-    if (stack) stack.innerHTML = notes.map(function (n) { return '<div class="quote-pill">' + esc(n) + "</div>"; }).join("");
-    var wrap = document.getElementById("bouquet-wrap");
-    if (!wrap) return;
-    if (MEDIA.bouquetImage) {
-      wrap.innerHTML = '<img src="' + MEDIA.bouquetImage + '" alt="Bouquet" style="width:min(300px,82%);height:auto;display:block">';
-      wrap.dataset.built = "img";
-    } else if (wrap.dataset.built !== "svg") {
-      wrap.innerHTML = roseBouquetSVG();
-      wrap.dataset.built = "svg";
-    }
+    stack.innerHTML = notes.length
+      ? notes.map(function (n) { return '<div class="quote-pill"><span class="quote-spark">✦</span><span>' + esc(n) + "</span></div>"; }).join("")
+      : '<div class="photo-fallback">no notes added yet</div>';
   }
 
   function animateQuotes() {
@@ -502,42 +560,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       el.style.animationDelay = (i * 130) + "ms";
       requestAnimationFrame(function () { el.classList.add("is-shown"); });
     });
-  }
-
-  function roseBlossom(cx, cy, r, color, colorDeep) {
-    var rings = "";
-    var layers = [{ rr: r, rot: 0 }, { rr: r * 0.72, rot: 24 }, { rr: r * 0.46, rot: -18 }, { rr: r * 0.24, rot: 10 }];
-    layers.forEach(function (l, i) {
-      rings += '<circle cx="' + cx + '" cy="' + cy + '" r="' + l.rr + '" fill="' + (i % 2 === 0 ? color : colorDeep) + '" opacity="' + (0.92 - i * 0.06) + '" transform="rotate(' + l.rot + " " + cx + " " + cy + ')"/>';
-    });
-    var petals = "";
-    for (var i = 0; i < 6; i++) {
-      var a = (i / 6) * Math.PI * 2;
-      var px = cx + Math.cos(a) * r * 0.62, py = cy + Math.sin(a) * r * 0.62;
-      petals += '<ellipse cx="' + px + '" cy="' + py + '" rx="' + (r * 0.38) + '" ry="' + (r * 0.26) + '" fill="' + colorDeep + '" opacity="0.5" transform="rotate(' + ((a * 180) / Math.PI) + " " + px + " " + py + ')"/>';
-    }
-    return '<g stroke="#5C1A1A" stroke-width="0.6">' + petals + rings + '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * 0.16) + '" fill="' + colorDeep + '"/></g>';
-  }
-  function leafShape(x, y, len, rot) {
-    return '<path d="M' + x + " " + y + " Q" + (x - len * 0.4) + " " + (y - len * 0.3) + " " + x + " " + (y - len) + " Q" + (x + len * 0.4) + " " + (y - len * 0.3) + " " + x + " " + y + ' Z" fill="#5C7A4E" stroke="#3E5735" stroke-width="0.8" transform="rotate(' + rot + " " + x + " " + y + ')"/>';
-  }
-  function roseBouquetSVG() {
-    var roses = [
-      { cx: 110, cy: 96, r: 26, c: "#C24444", d: "#8C2A2A" }, { cx: 158, cy: 88, r: 24, c: "#B23A3A", d: "#7E2222" },
-      { cx: 84, cy: 122, r: 22, c: "#CB5252", d: "#932E2E" }, { cx: 186, cy: 118, r: 22, c: "#B23A3A", d: "#7E2222" },
-      { cx: 134, cy: 68, r: 21, c: "#C24444", d: "#8C2A2A" }, { cx: 60, cy: 150, r: 18, c: "#CB5252", d: "#932E2E" },
-      { cx: 210, cy: 148, r: 18, c: "#B23A3A", d: "#7E2222" }, { cx: 135, cy: 132, r: 20, c: "#A83232", d: "#701E1E" }
-    ];
-    var roseMarkup = roses.map(function (r) { return roseBlossom(r.cx, r.cy, r.r, r.c, r.d); }).join("");
-    var leaves = [leafShape(70, 168, 34, -20), leafShape(220, 164, 32, 18), leafShape(135, 172, 30, 2), leafShape(100, 178, 26, -8), leafShape(190, 176, 26, 10)].join("");
-    return '<svg viewBox="0 0 300 340" width="100%" height="100%" style="display:block" xmlns="http://www.w3.org/2000/svg">' + leaves + roseMarkup +
-      '<g><path d="M50 200 L250 200 L206 330 Q150 350 94 330 Z" fill="var(--kraft)" stroke="#8A6A3E" stroke-width="2"/>' +
-      '<path d="M50 200 L150 256 L250 200" fill="none" stroke="#8A6A3E" stroke-width="1.2" opacity="0.5"/>' +
-      '<path d="M94 330 L150 256 L206 330" fill="none" stroke="#8A6A3E" stroke-width="1.2" opacity="0.5"/>' +
-      '<rect x="120" y="208" width="60" height="16" rx="8" fill="#B23A3A" transform="rotate(-3 150 216)"/>' +
-      '<path d="M150 216 C 132 206, 114 210, 114 226 C 114 237, 130 239, 141 228" fill="none" stroke="#8C2A2A" stroke-width="4" stroke-linecap="round"/>' +
-      '<path d="M150 216 C 168 206, 186 210, 186 226 C 186 237, 170 239, 159 228" fill="none" stroke="#8C2A2A" stroke-width="4" stroke-linecap="round"/>' +
-      '<circle cx="150" cy="218" r="4.5" fill="#7E2222"/></g></svg>';
   }
 
   function cakeSVG() {
@@ -686,22 +708,126 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     next();
   });
 
+  /* ====== Crop tool: one image at a time, drag to reposition, slider to zoom ====== */
+  var cropState = { natW: 0, natH: 0, base: 1, zoom: 1, tx: 0, ty: 0, viewport: 0, dragging: false, startX: 0, startY: 0, startTx: 0, startTy: 0 };
+  function openCropModal(dataUrl, onDone) {
+    var overlay = document.getElementById("cropModalOverlay");
+    var vp = document.getElementById("cropViewport");
+    var img = document.getElementById("cropImg");
+    var zoomInput = document.getElementById("cropZoom");
+
+    function centerImage() {
+      var scale = cropState.base * cropState.zoom;
+      var dispW = cropState.natW * scale, dispH = cropState.natH * scale;
+      cropState.tx = (cropState.viewport - dispW) / 2;
+      cropState.ty = (cropState.viewport - dispH) / 2;
+    }
+    function clampTranslate() {
+      var scale = cropState.base * cropState.zoom;
+      var dispW = cropState.natW * scale, dispH = cropState.natH * scale;
+      cropState.tx = Math.min(0, Math.max(cropState.viewport - dispW, cropState.tx));
+      cropState.ty = Math.min(0, Math.max(cropState.viewport - dispH, cropState.ty));
+    }
+    function applyTransform() {
+      var scale = cropState.base * cropState.zoom;
+      img.style.width = (cropState.natW * scale) + "px";
+      img.style.height = (cropState.natH * scale) + "px";
+      img.style.transform = "translate(" + cropState.tx + "px," + cropState.ty + "px)";
+    }
+
+    img.onload = function () {
+      cropState.natW = img.naturalWidth || 1;
+      cropState.natH = img.naturalHeight || 1;
+      cropState.viewport = vp.clientWidth;
+      cropState.base = cropState.viewport / Math.min(cropState.natW, cropState.natH);
+      cropState.zoom = 1;
+      zoomInput.value = 1;
+      centerImage();
+      applyTransform();
+    };
+    img.src = dataUrl;
+    overlay.classList.add("is-open");
+
+    zoomInput.oninput = function () {
+      cropState.zoom = parseFloat(zoomInput.value) || 1;
+      clampTranslate();
+      applyTransform();
+    };
+
+    vp.onpointerdown = function (e) {
+      cropState.dragging = true;
+      cropState.startX = e.clientX; cropState.startY = e.clientY;
+      cropState.startTx = cropState.tx; cropState.startTy = cropState.ty;
+      try { vp.setPointerCapture(e.pointerId); } catch (err) {}
+    };
+    vp.onpointermove = function (e) {
+      if (!cropState.dragging) return;
+      cropState.tx = cropState.startTx + (e.clientX - cropState.startX);
+      cropState.ty = cropState.startTy + (e.clientY - cropState.startY);
+      clampTranslate();
+      applyTransform();
+    };
+    function endDrag() { cropState.dragging = false; }
+    vp.onpointerup = endDrag;
+    vp.onpointercancel = endDrag;
+
+    function cleanupAndFinish(result) {
+      overlay.classList.remove("is-open");
+      vp.onpointerdown = vp.onpointermove = vp.onpointerup = vp.onpointercancel = null;
+      zoomInput.oninput = null;
+      img.onload = null;
+      onDone(result);
+    }
+
+    document.getElementById("cropUseBtn").onclick = function () {
+      var scale = cropState.base * cropState.zoom;
+      var sx = (-cropState.tx) / scale;
+      var sy = (-cropState.ty) / scale;
+      var sSize = cropState.viewport / scale;
+      var OUT = 1000;
+      var canvas = document.createElement("canvas");
+      canvas.width = OUT; canvas.height = OUT;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, OUT, OUT);
+      cleanupAndFinish(canvas.toDataURL("image/jpeg", 0.9));
+    };
+    document.getElementById("cropUseOriginalBtn").onclick = function () { cleanupAndFinish(dataUrl); };
+    document.getElementById("cropSkipBtn").onclick = function () { cleanupAndFinish(null); };
+  }
+
   document.getElementById("edPhotoInput").addEventListener("change", function (e) {
     var files = Array.from(e.target.files || []);
-    var statusEl = document.getElementById("edCloudStatus");
-    if (statusEl) statusEl.textContent = "Compressing " + files.length + " photo" + (files.length === 1 ? "" : "s") + "...";
-    Promise.all(files.map(function (f) { return compressImageFile(f, 1280, 0.75); }))
-      .then(function (compressedUrls) {
-        if (statusEl) statusEl.textContent = "Uploading " + compressedUrls.length + " photo" + (compressedUrls.length === 1 ? "" : "s") + "...";
-        return Promise.all(compressedUrls.map(function (u) { return uploadToStorage(u, "photos"); }));
-      })
-      .then(function (finalUrls) {
-        MEDIA.photos = (MEDIA.photos || []).concat(finalUrls.map(function (u) { return { src: u, caption: "" }; }));
-        renderEdPhotoThumbs();
-        if (statusEl) statusEl.textContent = "";
-        scheduleAutoSave();
-      });
     e.target.value = "";
+    if (!files.length) return;
+    var statusEl = document.getElementById("edCloudStatus");
+    var results = [];
+    var i = 0;
+    function next() {
+      if (i >= files.length) { finishBatch(); return; }
+      fileToDataUrl(files[i]).then(function (rawDataUrl) {
+        openCropModal(rawDataUrl, function (result) {
+          if (result) results.push(result);
+          i++;
+          next();
+        });
+      });
+    }
+    function finishBatch() {
+      if (!results.length) return;
+      if (statusEl) statusEl.textContent = "Compressing " + results.length + " photo" + (results.length === 1 ? "" : "s") + "...";
+      Promise.all(results.map(function (u) { return compressDataUrl(u, 1280, 0.8); }))
+        .then(function (compressedUrls) {
+          if (statusEl) statusEl.textContent = "Uploading " + compressedUrls.length + " photo" + (compressedUrls.length === 1 ? "" : "s") + "...";
+          return Promise.all(compressedUrls.map(function (u) { return uploadToStorage(u, "photos"); }));
+        })
+        .then(function (finalUrls) {
+          MEDIA.photos = (MEDIA.photos || []).concat(finalUrls.map(function (u) { return { src: u, caption: "" }; }));
+          renderEdPhotoThumbs();
+          if (statusEl) statusEl.textContent = "";
+          scheduleAutoSave();
+        });
+    }
+    next();
   });
 
   document.getElementById("edMusicAudioInput").addEventListener("change", function (e) {
@@ -726,18 +852,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       scheduleAutoSave();
     });
   });
-  document.getElementById("edBouquetInput").addEventListener("change", function (e) {
-    var f = e.target.files && e.target.files[0];
-    if (!f) return;
-    var previewEl = document.getElementById("edBouquetPreview");
-    previewEl.textContent = "Uploading...";
-    compressImageFile(f, 700, 0.85).then(function (url) { return uploadToStorage(url, "bouquet"); }).then(function (finalUrl) {
-      MEDIA.bouquetImage = finalUrl;
-      previewEl.innerHTML = '<img src="' + finalUrl + '" style="max-width:120px;border-radius:8px;display:block">';
-      scheduleAutoSave();
-    });
-  });
-
   var edTracklistRows = document.getElementById("edTracklistRows");
   function addTrackRow(title, artist) {
     var row = document.createElement("div");
@@ -765,17 +879,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     document.getElementById("edName").value = MEDIA.recipientName || "";
     document.getElementById("edMusicTitle").value = (MEDIA.music.featured && MEDIA.music.featured.title) || "";
     document.getElementById("edMusicArtist").value = (MEDIA.music.featured && MEDIA.music.featured.artist) || "";
-    document.getElementById("edMusicEmbed").value = (MEDIA.music.featured && MEDIA.music.featured.embedUrl) || "";
     document.getElementById("edLetter").value = (MEDIA.letter && MEDIA.letter.body) || "";
-    document.getElementById("edMusicAudioStatus").textContent = (MEDIA.music.featured && MEDIA.music.featured.audioSrc) ? "✅ Audio already attached." : "No audio uploaded yet.";
+    document.getElementById("edMusicAudioStatus").textContent = (MEDIA.music.featured && MEDIA.music.featured.audioSrc) ? "✅ Audio already attached." : "No audio uploaded yet. This plays right here on the page — no Spotify or YouTube links.";
     document.getElementById("edHbdAudioStatus").textContent = (MEDIA.happyBirthdayAudio && MEDIA.happyBirthdayAudio.src) ? "✅ Audio already attached." : "No audio uploaded yet.";
     renderEdPhotoThumbs();
     edTracklistRows.innerHTML = "";
     (MEDIA.music.tracklist || []).forEach(function (t) { addTrackRow(t.title, t.artist); });
     edFlowerRows.innerHTML = "";
     (MEDIA.flowerNotes || []).forEach(function (n) { addFlowerRow(n); });
-    var bouquetPreview = document.getElementById("edBouquetPreview");
-    bouquetPreview.innerHTML = MEDIA.bouquetImage ? '<img src="' + MEDIA.bouquetImage + '" style="max-width:120px;border-radius:8px;display:block">' : "";
     document.getElementById("editorOverlay").classList.add("is-open");
   }
   document.getElementById("editFab").addEventListener("click", openEditor);
@@ -785,7 +896,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     MEDIA.recipientName = document.getElementById("edName").value.trim() || "Friend";
     MEDIA.music.featured.title = document.getElementById("edMusicTitle").value.trim() || "Untitled";
     MEDIA.music.featured.artist = document.getElementById("edMusicArtist").value.trim();
-    MEDIA.music.featured.embedUrl = document.getElementById("edMusicEmbed").value.trim();
     MEDIA.music.tracklist = Array.from(edTracklistRows.querySelectorAll(".ed-row")).map(function (row) {
       return { title: row.querySelector(".track-title").value.trim(), artist: row.querySelector(".track-artist").value.trim() };
     }).filter(function (t) { return t.title; });
