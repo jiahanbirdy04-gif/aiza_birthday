@@ -34,9 +34,9 @@ button, a { font-family: inherit; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep); outline-offset: 3px; }
 
 .view { display: none; position: fixed; inset: 0; width: 100%; height: 100dvh; overflow-y: auto; flex-direction: column;
-  align-items: center; justify-content: center; padding: 48px 24px 64px; opacity: 0; animation: view-in 520ms var(--ease-slow) forwards; }
+  align-items: center; justify-content: center; padding: 48px 24px 64px; opacity: 0; animation: view-in 620ms var(--ease-slow) forwards; }
 .view.is-active { display: flex; }
-@keyframes view-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes view-in { from { opacity: 0; transform: translateY(22px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .view-inner { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .eyebrow { font-family: var(--hand); font-weight: 500; font-size: 1.5rem; color: var(--ink); margin: 0 0 4px; }
 .view-title { font-family: var(--serif); font-weight: 600; font-size: 2.2rem; margin: 0 0 6px; line-height: 1.15; }
@@ -66,10 +66,25 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .icon-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; }
 .icon-card { aspect-ratio: 1 / 1; background: var(--cream-light); border: none; border-radius: 14px; display: flex;
   align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
-  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease); }
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+  opacity: 0; transform: translateY(14px) scale(0.85); animation: icon-in 480ms var(--ease-slow) forwards; }
+.icon-card:nth-child(1) { animation-delay: 60ms; }
+.icon-card:nth-child(2) { animation-delay: 130ms; }
+.icon-card:nth-child(3) { animation-delay: 200ms; }
+.icon-card:nth-child(4) { animation-delay: 270ms; }
+.icon-card:nth-child(5) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 7px); animation-delay: 340ms; }
 .icon-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
 .icon-card:active { transform: scale(0.93); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); }
-.icon-card svg { width: 56%; height: 56%; color: var(--ink); }
+.icon-card svg { width: 56%; height: 56%; color: var(--ink); animation: icon-breathe 3.2s ease-in-out infinite; }
+.icon-card:nth-child(1) svg { animation-delay: 0.1s; }
+.icon-card:nth-child(2) svg { animation-delay: 0.5s; }
+.icon-card:nth-child(3) svg { animation-delay: 0.9s; }
+.icon-card:nth-child(4) svg { animation-delay: 1.3s; }
+.icon-card:nth-child(5) svg { animation-delay: 1.7s; }
+@keyframes icon-in { to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes icon-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.wish-video-label { cursor: pointer; }
+.wish-video { width: 100%; max-height: 50vh; border-radius: 12px; display: block; margin-top: 4px; background: #000; }
 
 #view-photos { justify-content: flex-start; padding-top: 28px; background-color: var(--cream); transition: background-color 480ms var(--ease-slow); }
 #view-photos .view-inner { max-width: 460px; }
@@ -321,14 +336,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   <section class="view" id="view-wishes">
     <div class="view-inner">
-      <p class="videos-caption">leave a little birthday message ↓</p>
+      <p class="videos-caption">leave a little birthday video ↓</p>
       <div class="wishes-list" id="wishes-list"></div>
-      <form class="wish-form" id="wishForm">
+      <div class="wish-form" id="wishForm">
         <input type="text" id="wishName" placeholder="Your name" maxlength="40" required>
-        <textarea id="wishMessage" placeholder="Write your birthday wish..." maxlength="300" rows="3" required></textarea>
-        <button type="submit" class="pill-btn is-candle">send wish</button>
+        <label class="pill-btn is-candle wish-video-label" for="wishVideoInput">🎥 record or choose a video wish</label>
+        <input type="file" id="wishVideoInput" accept="video/*" capture="user" style="display:none">
         <p class="wish-status" id="wishStatus"></p>
-      </form>
+      </div>
     </div>
     <button class="back-link" data-goto="menu">back</button>
   </section>
@@ -507,12 +522,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   // string in localStorage — could blow the ~5-10MB storage quota and silently break every
   // future save (captions included), since the failure was swallowed by a try/catch. This
   // uploads the raw file directly and, on failure, reports it honestly instead of embedding.
-  function uploadVideoFile(file) {
+  function uploadVideoFile(file, folder) {
+    folder = folder || "videos";
     if (!supa) {
       if (file.size > 6 * 1024 * 1024) return Promise.reject(new Error("offline and file too large to store on this device"));
       return fileToDataUrl(file);
     }
-    var path = ensureSiteKey() + "/videos/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + extFromMime(file.type);
+    var path = ensureSiteKey() + "/" + folder + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + extFromMime(file.type);
     return supa.storage.from("birthday-media").upload(path, file, { contentType: file.type || "video/mp4", upsert: true })
       .then(function (res) {
         if (res.error) throw new Error(res.error.message || "upload failed");
@@ -819,7 +835,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     }
     list.innerHTML = wishes.map(function (w, i) {
       return '<div class="wish-card" style="animation-delay:' + Math.min(i * 60, 360) + 'ms">' +
-        '<p class="wish-message">' + esc(w.message) + '</p>' +
+        '<video class="wish-video" src="' + w.video_url + '" controls playsinline preload="metadata"></video>' +
         '<p class="wish-name">— ' + esc(w.name) + '</p></div>';
     }).join("");
   }
@@ -829,7 +845,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   // without needing write access to (or any risk of overwriting) the rest of the site.
   function refreshWishesFromCloud() {
     if (!supa) return;
-    supa.from("birthday_wishes").select("name, message, created_at").eq("site_key", ensureSiteKey())
+    supa.from("birthday_wishes").select("name, video_url, created_at").eq("site_key", ensureSiteKey())
       .order("created_at", { ascending: false })
       .then(function (res) {
         if (res.error || !res.data) return;
@@ -840,36 +856,38 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   }
 
   var wishForm = document.getElementById("wishForm");
-  if (wishForm) {
-    wishForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+  var wishVideoInput = document.getElementById("wishVideoInput");
+  if (wishForm && wishVideoInput) {
+    wishVideoInput.addEventListener("change", function () {
+      var file = wishVideoInput.files && wishVideoInput.files[0];
+      wishVideoInput.value = "";
+      if (!file) return;
       var nameEl = document.getElementById("wishName");
-      var msgEl = document.getElementById("wishMessage");
       var statusEl = document.getElementById("wishStatus");
-      var submitBtn = wishForm.querySelector('button[type="submit"]');
       var name = nameEl.value.trim();
-      var message = msgEl.value.trim();
-      if (!name || !message) { statusEl.textContent = "Please add your name and a short message."; return; }
-      submitBtn.disabled = true;
-      statusEl.textContent = "Sending...";
-      var entry = { name: name, message: message, created_at: new Date().toISOString() };
-      function addLocallyAndReset(msg) {
-        MEDIA.wishes = [entry].concat(MEDIA.wishes || []);
-        renderWishes();
-        nameEl.value = "";
-        msgEl.value = "";
-        submitBtn.disabled = false;
-        statusEl.textContent = msg;
-      }
-      if (!supa) { addLocallyAndReset("✅ Saved on this device (you're offline)."); return; }
-      supa.from("birthday_wishes").insert({ site_key: ensureSiteKey(), name: name, message: message })
-        .then(function (res) {
-          if (res.error) { submitBtn.disabled = false; statusEl.textContent = "Couldn't send: " + res.error.message; return; }
-          addLocallyAndReset("✅ Sent! Thank you 💛");
+      if (!name) { statusEl.textContent = "Please add your name first."; return; }
+      statusEl.textContent = "Uploading your video wish... this may take a moment.";
+      uploadVideoFile(file, "wishes")
+        .then(function (videoUrl) {
+          var entry = { name: name, video_url: videoUrl, created_at: new Date().toISOString() };
+          function addLocallyAndReset(msg) {
+            MEDIA.wishes = [entry].concat(MEDIA.wishes || []);
+            renderWishes();
+            nameEl.value = "";
+            statusEl.textContent = msg;
+          }
+          if (!supa) { addLocallyAndReset("✅ Saved on this device (you're offline)."); return; }
+          supa.from("birthday_wishes").insert({ site_key: ensureSiteKey(), name: name, video_url: videoUrl })
+            .then(function (res) {
+              if (res.error) { statusEl.textContent = "Couldn't send: " + res.error.message; return; }
+              addLocallyAndReset("✅ Sent! Thank you 💛");
+            })
+            .catch(function () {
+              statusEl.textContent = "Couldn't reach the cloud — check your connection and try again.";
+            });
         })
-        .catch(function () {
-          submitBtn.disabled = false;
-          statusEl.textContent = "Couldn't reach the cloud — check your connection and try again.";
+        .catch(function (err) {
+          statusEl.textContent = "Couldn't upload: " + (err && err.message ? err.message : "try again.");
         });
     });
   }
