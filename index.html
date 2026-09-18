@@ -1113,26 +1113,42 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       });
     });
   }
+  // Anything over this streams fine on wifi but tends to stall mid-playback on phone
+  // data — the classic "plays a few seconds then buffers" complaint. We don't block
+  // the upload (it's still the visitor's clip to use), just flag it clearly so it's
+  // obvious *why* a clip might stutter, instead of that being a mystery later.
+  var VIDEO_WARN_BYTES = 20 * 1024 * 1024;
+  function mb(bytes) { return (bytes / (1024 * 1024)).toFixed(0); }
+
   document.getElementById("edVideoInput").addEventListener("change", function (e) {
     var files = Array.from(e.target.files || []);
     e.target.value = "";
     if (!files.length) return;
     var statusEl = document.getElementById("edVideoStatus");
     var total = files.length;
-    var i = 0, okCount = 0, failCount = 0;
+    var i = 0, okCount = 0, failCount = 0, bigFiles = [];
     function next() {
       if (i >= total) {
         if (statusEl) {
+          var msg;
           if (failCount === 0) {
-            statusEl.textContent = "✅ " + okCount + " video" + (okCount === 1 ? "" : "s") + " added.";
+            msg = "✅ " + okCount + " video" + (okCount === 1 ? "" : "s") + " added.";
           } else {
-            statusEl.textContent = "⚠️ " + okCount + " added, " + failCount + " failed to upload — try those again on a stronger connection.";
+            msg = "⚠️ " + okCount + " added, " + failCount + " failed to upload — try those again on a stronger connection.";
           }
+          if (bigFiles.length) {
+            msg += " Heads up: " + bigFiles.map(function (f) { return "\"" + f.name + "\" (" + mb(f.size) + "MB)"; }).join(", ") +
+              (bigFiles.length === 1 ? " is large and may stutter" : " are large and may stutter") +
+              " on mobile data — compress to 720p (e.g. with HandBrake, or your phone's built-in \"smaller file\" share option) and re-upload for smoother playback.";
+          }
+          statusEl.textContent = msg;
         }
         return;
       }
+      if (files[i].size > VIDEO_WARN_BYTES) bigFiles.push(files[i]);
       if (statusEl) {
         statusEl.textContent = "Uploading video " + (i + 1) + " of " + total +
+          (files[i].size > VIDEO_WARN_BYTES ? " (" + mb(files[i].size) + "MB — large, this one may stutter for visitors)" : "") +
           " — larger clips can take a minute or two on mobile data, please keep this page open until it finishes...";
       }
       uploadVideoFile(files[i])
