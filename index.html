@@ -74,10 +74,19 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 #view-photos { justify-content: flex-start; padding-top: 28px; background-color: var(--cream); transition: background-color 480ms var(--ease-slow); }
 #view-photos .view-inner { max-width: 460px; }
 .photos-caption { font-family: var(--sans); font-weight: 700; font-style: italic; font-size: 0.8rem; margin: 0 0 18px; text-align: left; width: 100%; }
+.feed-wrap { position: relative; width: 100%; }
+.feed-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(20, 10, 30, 0.55); border: none; color: var(--ink); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; backdrop-filter: blur(3px); transition: opacity 200ms var(--ease), transform 150ms var(--ease); }
+.feed-arrow:active { transform: translateY(-50%) scale(0.9); }
+.feed-arrow.is-prev { left: 2px; }
+.feed-arrow.is-next { right: 2px; }
+.feed-arrow[disabled] { opacity: 0; pointer-events: none; }
+.feed-arrow svg { width: 18px; height: 18px; }
 .photo-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; padding: 6px 6px 22px; margin: 0 -6px; scrollbar-width: none; justify-content: center; align-items: center; }
 .photo-feed::-webkit-scrollbar { display: none; }
-.photo-card { flex: 0 0 90%; max-width: 380px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
+.photo-card { flex: 0 0 100%; max-width: 420px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
   padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center;
   backdrop-filter: blur(2px); }
 .photo-card img { display: block; width: 100%; height: auto; max-height: 68vh; border-radius: 10px; object-fit: cover; }
@@ -93,10 +102,22 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .video-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; padding: 6px 6px 22px; margin: 0 -6px; scrollbar-width: none; justify-content: center; align-items: center; }
 .video-feed::-webkit-scrollbar { display: none; }
-.video-card { flex: 0 0 90%; max-width: 380px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
+.video-card { flex: 0 0 100%; max-width: 420px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
   padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center;
   backdrop-filter: blur(2px); }
-.video-card video { display: block; width: 100%; height: auto; max-height: 68vh; border-radius: 10px; background: #000; }
+.video-frame { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; }
+.video-frame video { display: block; width: 100%; height: auto; max-height: 68vh; border-radius: 10px; background: #000; }
+/* Custom play button + seek bar, replacing the browser's native video controls — on some
+   phones, a portrait video's rotation metadata makes the native play button render off-center
+   (pinned toward one edge instead of centered), which this sidesteps entirely. */
+.video-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px;
+  border-radius: 50%; background: var(--lavender); color: var(--ink-dark); border: none; display: flex; align-items: center;
+  justify-content: center; cursor: pointer; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4); transition: opacity 180ms var(--ease), transform 180ms var(--ease); }
+.video-play-btn svg { width: 24px; height: 24px; margin-left: 2px; }
+.video-frame.is-playing .video-play-btn { opacity: 0; transform: translate(-50%, -50%) scale(0.8); pointer-events: none; }
+.video-seek-wrap { position: absolute; left: 10px; right: 10px; bottom: 10px; opacity: 0; transition: opacity 200ms var(--ease); pointer-events: none; }
+.video-frame.is-playing .video-seek-wrap, .video-frame:active .video-seek-wrap { opacity: 1; pointer-events: auto; }
+.video-seek-wrap input[type="range"] { width: 100%; accent-color: var(--lavender); }
 
 .music-card { width: 100%; background: var(--blush); border-radius: 16px; padding: 26px 22px 20px; display: flex;
   flex-direction: column; align-items: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
@@ -243,7 +264,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   <section class="view" id="view-photos">
     <div class="view-inner">
       <p class="photos-caption">a few of my favorites — swipe to see more →</p>
-      <div class="photo-feed" id="photo-feed"></div>
+      <div class="feed-wrap">
+        <button class="feed-arrow is-prev" id="photo-prev" aria-label="Previous photo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <div class="photo-feed" id="photo-feed"></div>
+        <button class="feed-arrow is-next" id="photo-next" aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
     </div>
     <button class="back-link" data-goto="menu">back</button>
   </section>
@@ -260,7 +285,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   <section class="view" id="view-videos">
     <div class="view-inner">
       <p class="videos-caption">a few little moments — swipe to see more →</p>
-      <div class="video-feed" id="video-feed"></div>
+      <div class="feed-wrap">
+        <button class="feed-arrow is-prev" id="video-prev" aria-label="Previous video" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <div class="video-feed" id="video-feed"></div>
+        <button class="feed-arrow is-next" id="video-next" aria-label="Next video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
     </div>
     <button class="back-link" data-goto="menu">back</button>
   </section>
@@ -488,6 +517,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     }
     var hbdAudio = document.getElementById("hbd-audio");
     if (hbdAudio && !hbdAudio.paused) hbdAudio.pause();
+    document.querySelectorAll(".video-frame video").forEach(function (v) { if (!v.paused) v.pause(); });
 
     document.querySelectorAll(".view").forEach(function (el) { el.classList.remove("is-active"); });
     var target = document.getElementById("view-" + name);
@@ -530,6 +560,31 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   var PHOTO_BG_PALETTE = ["#443066", "#523A7A", "#5A3958", "#4C3B6C", "#5E3E56", "#4A3670"];
   var photoObserver = null;
+  // Wires a pair of arrow buttons to scroll a swipeable feed by one card at a time, and
+  // keeps them disabled at the start/end so they don't imply there's more to see when there isn't.
+  function wireFeedArrows(feed, prevBtn, nextBtn) {
+    if (!feed || !prevBtn || !nextBtn) return;
+    function cardWidth() {
+      var card = feed.firstElementChild;
+      if (!card) return feed.clientWidth;
+      var gap = parseFloat(getComputedStyle(feed).columnGap || getComputedStyle(feed).gap || "0") || 0;
+      return card.getBoundingClientRect().width + gap;
+    }
+    function updateState() {
+      var atStart = feed.scrollLeft <= 4;
+      var atEnd = feed.scrollLeft >= feed.scrollWidth - feed.clientWidth - 4;
+      var scrollable = feed.scrollWidth > feed.clientWidth + 4;
+      prevBtn.disabled = atStart;
+      nextBtn.disabled = atEnd || !scrollable;
+    }
+    prevBtn.onclick = function () { feed.scrollBy({ left: -cardWidth(), behavior: "smooth" }); };
+    nextBtn.onclick = function () { feed.scrollBy({ left: cardWidth(), behavior: "smooth" }); };
+    if (feed._arrowScrollHandler) feed.removeEventListener("scroll", feed._arrowScrollHandler);
+    feed._arrowScrollHandler = updateState;
+    feed.addEventListener("scroll", updateState, { passive: true });
+    updateState();
+  }
+
   function renderPhotos() {
     var feed = document.getElementById("photo-feed");
     var view = document.getElementById("view-photos");
@@ -539,6 +594,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (!photos.length) {
       feed.innerHTML = '<div class="photo-fallback">no photos added yet</div>';
       if (view) view.style.backgroundColor = "var(--cream)";
+      wireFeedArrows(feed, document.getElementById("photo-prev"), document.getElementById("photo-next"));
       return;
     }
     feed.innerHTML = photos.map(function (p, i) {
@@ -546,6 +602,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         '<img loading="lazy" alt="' + esc(p.caption || ("Photo " + (i + 1))) + '" src="' + p.src + '">' +
         (p.caption ? '<p class="photo-caption">' + esc(p.caption) + '</p>' : '') + '</div>';
     }).join("");
+    wireFeedArrows(feed, document.getElementById("photo-prev"), document.getElementById("photo-next"));
     if (view && "IntersectionObserver" in window) {
       photoObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
@@ -618,11 +675,53 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     var videos = MEDIA.videos || [];
     if (!videos.length) {
       feed.innerHTML = '<div class="photo-fallback">no videos added yet</div>';
+      wireFeedArrows(feed, document.getElementById("video-prev"), document.getElementById("video-next"));
       return;
     }
     feed.innerHTML = videos.map(function (v, i) {
-      return '<div class="video-card" style="animation-delay:' + Math.min(i * 70, 420) + 'ms"><video controls playsinline preload="metadata" src="' + v.src + '"></video></div>';
+      return '<div class="video-card" style="animation-delay:' + Math.min(i * 70, 420) + 'ms">' +
+        '<div class="video-frame">' +
+        '<video playsinline preload="metadata" src="' + v.src + '"></video>' +
+        '<button class="video-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>' +
+        '<div class="video-seek-wrap"><input type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"></div>' +
+        '</div></div>';
     }).join("");
+
+    // Custom controls instead of the browser's native ones: on some phones a portrait
+    // video's rotation metadata makes the native play button render off-center (pinned
+    // toward one edge instead of the middle) — building our own sidesteps that entirely,
+    // and also lets us reliably pause every other clip the moment one starts playing.
+    var frames = Array.prototype.slice.call(feed.querySelectorAll(".video-frame"));
+    frames.forEach(function (frame) {
+      var video = frame.querySelector("video");
+      var playBtn = frame.querySelector(".video-play-btn");
+      var seek = frame.querySelector('input[type="range"]');
+      function togglePlay() {
+        if (video.paused) {
+          var p = video.play();
+          if (p && p.catch) p.catch(function () {});
+        } else {
+          video.pause();
+        }
+      }
+      video.addEventListener("loadedmetadata", function () { seek.max = video.duration || 100; });
+      video.addEventListener("timeupdate", function () { if (!seek.matches(":active")) seek.value = video.currentTime; });
+      video.addEventListener("play", function () {
+        frame.classList.add("is-playing");
+        frames.forEach(function (other) {
+          if (other === frame) return;
+          var ov = other.querySelector("video");
+          if (ov && !ov.paused) ov.pause();
+        });
+      });
+      video.addEventListener("pause", function () { frame.classList.remove("is-playing"); });
+      video.addEventListener("ended", function () { frame.classList.remove("is-playing"); });
+      seek.addEventListener("input", function () { video.currentTime = seek.value; });
+      playBtn.addEventListener("click", togglePlay);
+      video.addEventListener("click", togglePlay);
+    });
+
+    wireFeedArrows(feed, document.getElementById("video-prev"), document.getElementById("video-next"));
   }
 
   function cakeSVG() {
