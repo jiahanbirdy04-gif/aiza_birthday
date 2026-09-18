@@ -584,6 +584,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     photos: [],
     videos: [],
     wishes: [],
+    hiddenWishIds: [],
     siteKey: "",
     happyBirthdayAudio: { src: "" },
     music: { featured: { title: "Untitled", artist: "", audioSrc: "" }, tracklist: [] },
@@ -926,10 +927,15 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     wireFeedArrows(feed, document.getElementById("video-prev"), document.getElementById("video-next"));
   }
 
+  function visibleWishes() {
+    var hidden = MEDIA.hiddenWishIds || [];
+    return (MEDIA.wishes || []).filter(function (w) { return !w.id || hidden.indexOf(w.id) === -1; });
+  }
+
   function renderWishes() {
     var list = document.getElementById("wishes-list");
     if (!list) return;
-    var wishes = MEDIA.wishes || [];
+    var wishes = visibleWishes();
     if (!wishes.length) {
       list.innerHTML = '<p class="wishes-empty">no video greetings added yet</p>';
       return;
@@ -966,11 +972,20 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   // Adding a greeting only happens here in the editor now — the published site is
   // watch-only for visitors, so there's no open upload form on the live page.
+  //
+  // Removing one does NOT rely on deleting the row from Supabase: the anon key used
+  // on the public site is (intentionally) allowed to insert wishes but not delete
+  // them, so a real delete request silently fails there and the clip just comes back
+  // next time the list refreshes — that was the "can't delete it anymore" bug. Instead
+  // we record the id as hidden on MEDIA itself, which saves through the same reliable
+  // autosave/cloud-sync path as everything else on the site, and filter hidden ids out
+  // everywhere the list is shown.
   var edWishThumbs = document.getElementById("edWishThumbs");
   function renderEdWishThumbs() {
     if (!edWishThumbs) return;
     edWishThumbs.innerHTML = "";
-    (MEDIA.wishes || []).forEach(function (w, i) {
+    var shown = visibleWishes();
+    shown.forEach(function (w, i) {
       var div = document.createElement("div");
       div.className = "thumb";
       div.innerHTML = '<div class="thumb-img"><video src="' + esc(w.video_url) + '" muted playsinline preload="metadata"></video><button data-i="' + i + '">✕</button></div>' +
@@ -979,14 +994,23 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     });
     edWishThumbs.querySelectorAll(".thumb-img button").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        var i = parseInt(btn.getAttribute("data-i"), 10);
-        var removed = (MEDIA.wishes || [])[i];
-        MEDIA.wishes.splice(i, 1);
+        var w = shown[parseInt(btn.getAttribute("data-i"), 10)];
+        if (!w) return;
+        if (w.id) {
+          MEDIA.hiddenWishIds = MEDIA.hiddenWishIds || [];
+          if (MEDIA.hiddenWishIds.indexOf(w.id) === -1) MEDIA.hiddenWishIds.push(w.id);
+          // Best-effort real delete too, in case the table does allow it — but we
+          // never depend on this succeeding.
+          if (supa) supa.from("birthday_wishes").delete().eq("id", w.id).catch(function () {});
+        } else {
+          // No id yet (added this session while offline) — nothing saved to hide,
+          // just drop it from the local list by identity.
+          var idx = (MEDIA.wishes || []).indexOf(w);
+          if (idx !== -1) MEDIA.wishes.splice(idx, 1);
+        }
         renderEdWishThumbs();
         renderWishes();
-        if (supa && removed && removed.id) {
-          supa.from("birthday_wishes").delete().eq("id", removed.id).catch(function () {});
-        }
+        scheduleAutoSave();
       });
     });
   }
