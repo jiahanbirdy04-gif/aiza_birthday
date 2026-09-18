@@ -118,6 +118,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .video-seek-wrap { position: absolute; left: 10px; right: 10px; bottom: 10px; opacity: 0; transition: opacity 200ms var(--ease); pointer-events: none; }
 .video-frame.is-playing .video-seek-wrap, .video-frame:active .video-seek-wrap { opacity: 1; pointer-events: auto; }
 .video-seek-wrap input[type="range"] { width: 100%; accent-color: var(--lavender); }
+.video-spinner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px;
+  border-radius: 50%; border: 3px solid rgba(245, 237, 230, 0.28); border-top-color: var(--ink); opacity: 0;
+  pointer-events: none; transition: opacity 150ms var(--ease); animation: spin 800ms linear infinite; }
+.video-frame.is-buffering .video-spinner { opacity: 1; }
+.video-frame.is-buffering .video-play-btn { opacity: 0; }
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
 .music-card { width: 100%; background: var(--blush); border-radius: 16px; padding: 26px 22px 20px; display: flex;
   flex-direction: column; align-items: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
@@ -681,7 +687,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     feed.innerHTML = videos.map(function (v, i) {
       return '<div class="video-card" style="animation-delay:' + Math.min(i * 70, 420) + 'ms">' +
         '<div class="video-frame">' +
-        '<video playsinline preload="metadata" src="' + v.src + '"></video>' +
+        '<video playsinline webkit-playsinline preload="none" src="' + v.src + '"></video>' +
+        '<div class="video-spinner"></div>' +
         '<button class="video-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>' +
         '<div class="video-seek-wrap"><input type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"></div>' +
         '</div></div>';
@@ -696,8 +703,22 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       var video = frame.querySelector("video");
       var playBtn = frame.querySelector(".video-play-btn");
       var seek = frame.querySelector('input[type="range"]');
+      var primed = false;
+      // Loading every clip's metadata up front makes them all fight over bandwidth,
+      // which is a big part of what made tapping play feel slow/stuck. Instead each
+      // clip stays fully unloaded (preload="none") until it actually scrolls into
+      // view, at which point we quietly start buffering just that one so it's ready
+      // by the time you tap it.
+      function primeIfNeeded() {
+        if (primed) return;
+        primed = true;
+        video.preload = "auto";
+        video.load();
+      }
       function togglePlay() {
+        primeIfNeeded();
         if (video.paused) {
+          frame.classList.add("is-buffering");
           var p = video.play();
           if (p && p.catch) p.catch(function () {});
         } else {
@@ -706,6 +727,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       }
       video.addEventListener("loadedmetadata", function () { seek.max = video.duration || 100; });
       video.addEventListener("timeupdate", function () { if (!seek.matches(":active")) seek.value = video.currentTime; });
+      // These fire while the browser is actually fetching more data mid-playback
+      // (e.g. on a slow connection) — showing a spinner here instead of nothing
+      // is what turns "did it freeze?" into "oh, it's loading."
+      video.addEventListener("waiting", function () { frame.classList.add("is-buffering"); });
+      video.addEventListener("stalled", function () { frame.classList.add("is-buffering"); });
+      video.addEventListener("canplay", function () { frame.classList.remove("is-buffering"); });
+      video.addEventListener("playing", function () { frame.classList.remove("is-buffering"); });
+      video.addEventListener("error", function () { frame.classList.remove("is-buffering"); });
       video.addEventListener("play", function () {
         frame.classList.add("is-playing");
         frames.forEach(function (other) {
@@ -714,12 +743,26 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
           if (ov && !ov.paused) ov.pause();
         });
       });
-      video.addEventListener("pause", function () { frame.classList.remove("is-playing"); });
+      video.addEventListener("pause", function () { frame.classList.remove("is-playing"); frame.classList.remove("is-buffering"); });
       video.addEventListener("ended", function () { frame.classList.remove("is-playing"); });
       seek.addEventListener("input", function () { video.currentTime = seek.value; });
       playBtn.addEventListener("click", togglePlay);
       video.addEventListener("click", togglePlay);
     });
+
+    // Pre-buffer whichever clip is actually centered/visible in the swipe feed, so
+    // it's already partway loaded by the time someone taps it — without wasting
+    // bandwidth buffering every clip in the row at once.
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var v = entry.target.querySelector("video");
+          if (v && v.preload !== "auto") { v.preload = "auto"; v.load(); }
+        });
+      }, { root: feed, threshold: 0.6 });
+      frames.forEach(function (frame) { io.observe(frame); });
+    }
 
     wireFeedArrows(feed, document.getElementById("video-prev"), document.getElementById("video-next"));
   }
