@@ -72,7 +72,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
 #view-photos { justify-content: flex-start; padding-top: 28px; background-color: var(--cream); transition: background-color 480ms var(--ease-slow); }
 #view-photos .view-inner { max-width: 460px; }
-.photos-caption { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; margin: 0 0 18px; text-align: left; width: 100%; }
+.photos-caption { font-family: var(--sans); font-weight: 700; font-style: italic; font-size: 0.8rem; margin: 0 0 18px; text-align: left; width: 100%; }
 .photo-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; padding: 6px 6px 22px; margin: 0 -6px; scrollbar-width: none; }
 .photo-feed::-webkit-scrollbar { display: none; }
@@ -86,7 +86,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
 #view-videos { justify-content: flex-start; padding-top: 28px; }
 #view-videos .view-inner { max-width: 460px; }
-.videos-caption { font-family: var(--sans); font-weight: 700; font-size: 0.95rem; margin: 0 0 18px; text-align: left; width: 100%; }
+.videos-caption { font-family: var(--sans); font-weight: 700; font-style: italic; font-size: 0.8rem; margin: 0 0 18px; text-align: left; width: 100%; }
 .video-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; padding: 6px 6px 22px; margin: 0 -6px; scrollbar-width: none; }
 .video-feed::-webkit-scrollbar { display: none; }
@@ -132,7 +132,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   text-align: left; opacity: 0; transform: translateY(14px); }
 .letter-card.is-in { animation: letter-in 620ms var(--ease-slow) forwards; }
 @keyframes letter-in { to { opacity: 1; transform: translateY(0); } }
-.letter-body { font-family: var(--hand); font-weight: 500; font-size: 1.28rem; line-height: 1.5; white-space: pre-wrap; max-height: 46vh; overflow-y: auto; }
+.letter-body { font-family: var(--hand); font-weight: 500; font-style: italic; font-size: 1.28rem; line-height: 1.5; white-space: pre-wrap; max-height: 46vh; overflow-y: auto; }
 .letter-body::-webkit-scrollbar { width: 5px; }
 .letter-body::-webkit-scrollbar-thumb { background: var(--lavender); border-radius: 10px; }
 @media (max-width: 380px) { .view-title { font-size: 1.9rem; } #view-landing .view-title { font-size: 2rem; } }
@@ -420,6 +420,27 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         return (pub.data && pub.data.publicUrl) || dataUrl;
       })
       .catch(function () { return dataUrl; });
+  }
+
+  // Videos get their own upload path: unlike photos/audio, converting a large video file to a
+  // base64 data URL first (the old fileToDataUrl -> uploadToStorage route) could run a phone's
+  // browser out of memory and fail silently, AND — if it fell back to embedding that giant
+  // string in localStorage — could blow the ~5-10MB storage quota and silently break every
+  // future save (captions included), since the failure was swallowed by a try/catch. This
+  // uploads the raw file directly and, on failure, reports it honestly instead of embedding.
+  function uploadVideoFile(file) {
+    if (!supa) {
+      if (file.size > 6 * 1024 * 1024) return Promise.reject(new Error("offline and file too large to store on this device"));
+      return fileToDataUrl(file);
+    }
+    var path = ensureSiteKey() + "/videos/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + extFromMime(file.type);
+    return supa.storage.from("birthday-media").upload(path, file, { contentType: file.type || "video/mp4", upsert: true })
+      .then(function (res) {
+        if (res.error) throw new Error(res.error.message || "upload failed");
+        var pub = supa.storage.from("birthday-media").getPublicUrl(path);
+        if (pub.data && pub.data.publicUrl) return pub.data.publicUrl;
+        throw new Error("couldn't get a public URL");
+      });
   }
 
   /* ====== DATA — this whole block gets replaced when you hit Download ====== */
@@ -919,29 +940,36 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (!files.length) return;
     var statusEl = document.getElementById("edVideoStatus");
     var total = files.length;
-    var i = 0;
+    var i = 0, okCount = 0, failCount = 0;
     function next() {
       if (i >= total) {
-        if (statusEl) statusEl.textContent = "✅ All videos added.";
+        if (statusEl) {
+          if (failCount === 0) {
+            statusEl.textContent = "✅ " + okCount + " video" + (okCount === 1 ? "" : "s") + " added.";
+          } else {
+            statusEl.textContent = "⚠️ " + okCount + " added, " + failCount + " failed to upload — try those again on a stronger connection.";
+          }
+        }
         return;
       }
       if (statusEl) {
         statusEl.textContent = "Uploading video " + (i + 1) + " of " + total +
           " — larger clips can take a minute or two on mobile data, please keep this page open until it finishes...";
       }
-      fileToDataUrl(files[i]).then(function (rawDataUrl) { return uploadToStorage(rawDataUrl, "videos"); })
+      uploadVideoFile(files[i])
         .then(function (finalUrl) {
           // Saved to this device the moment each clip finishes (not just at the end of the
           // whole batch) — so if the page gets closed or refreshed partway through, the
           // videos already uploaded aren't lost.
           MEDIA.videos = (MEDIA.videos || []).concat([{ src: finalUrl }]);
+          okCount++;
           renderEdVideoThumbs();
           scheduleAutoSave();
           i++;
           next();
         })
         .catch(function () {
-          if (statusEl) statusEl.textContent = "Video " + (i + 1) + " of " + total + " couldn't be read — skipping it and continuing.";
+          failCount++;
           i++;
           next();
         });
