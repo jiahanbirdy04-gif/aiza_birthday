@@ -176,12 +176,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .wish-message { font-family: var(--hand); font-size: 1.05rem; margin: 0 0 6px; color: var(--ink); line-height: 1.35; word-break: break-word; }
 .wish-name { font-family: var(--sans); font-weight: 700; font-size: 0.78rem; margin: 0; color: var(--ink-soft); text-align: right; }
 .wishes-empty { font-family: var(--hand); font-size: 1rem; color: var(--ink-soft); margin: 4px 0 20px; text-align: center; width: 100%; }
-.wish-form { width: 100%; display: flex; flex-direction: column; gap: 10px; align-items: center; }
-.wish-form input, .wish-form textarea { width: 100%; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(245, 237, 230, 0.25);
-  border-radius: 12px; padding: 11px 14px; font-family: var(--sans); font-size: 0.92rem; color: var(--ink); resize: none; }
-.wish-form input::placeholder, .wish-form textarea::placeholder { color: var(--ink-soft); }
-.wish-form button.pill-btn { border: none; }
-.wish-status { font-family: var(--sans); font-size: 0.8rem; color: var(--ink-soft); min-height: 1.1em; margin: 2px 0 0; text-align: center; }
 .video-spinner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 34px; height: 34px;
   border-radius: 50%; border: 3px solid rgba(245, 237, 230, 0.28); border-top-color: var(--ink); opacity: 0;
   pointer-events: none; transition: opacity 150ms var(--ease); animation: spin 800ms linear infinite; }
@@ -377,14 +371,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   <section class="view" id="view-wishes">
     <div class="view-inner">
-      <p class="videos-caption">leave a little birthday video ↓</p>
+      <p class="videos-caption">little birthday greetings ↓</p>
       <div class="wishes-list" id="wishes-list"></div>
-      <div class="wish-form" id="wishForm">
-        <input type="text" id="wishName" placeholder="Your name" maxlength="40" required>
-        <label class="pill-btn is-candle wish-video-label" for="wishVideoInput">🎥 record or choose a video wish</label>
-        <input type="file" id="wishVideoInput" accept="video/*" style="display:none">
-        <p class="wish-status" id="wishStatus"></p>
-      </div>
     </div>
     <button class="back-link" data-goto="menu">back</button>
   </section>
@@ -438,6 +426,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <input type="file" id="edVideoInput" accept="video/*" multiple>
     <p class="ed-hint" id="edVideoStatus"></p>
     <div class="photo-thumbs" id="edVideoThumbs"></div>
+  </div>
+
+  <div class="ed-section">
+    <h2>💌 Video Greetings</h2>
+    <p class="ed-hint">Little birthday-wish videos from friends and family — visitors can only watch these, so add them here yourself.</p>
+    <label class="ed-label">Their name</label>
+    <input class="ed-input" id="edWishName" placeholder="e.g. Maya">
+    <label class="ed-label">Their video</label>
+    <input type="file" id="edWishVideoInput" accept="video/*">
+    <p class="ed-hint" id="edWishStatus"></p>
+    <div class="photo-thumbs" id="edWishThumbs"></div>
   </div>
 
   <div class="ed-section">
@@ -932,57 +931,94 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (!list) return;
     var wishes = MEDIA.wishes || [];
     if (!wishes.length) {
-      list.innerHTML = '<p class="wishes-empty">no birthday wishes yet — be the first to leave one!</p>';
+      list.innerHTML = '<p class="wishes-empty">no video greetings added yet</p>';
       return;
     }
     list.innerHTML = wishes.map(function (w, i) {
       return '<div class="wish-card" style="animation-delay:' + Math.min(i * 60, 360) + 'ms">' +
-        '<video class="wish-video" src="' + w.video_url + '" controls playsinline preload="metadata"></video>' +
+        '<video class="wish-video" src="' + esc(w.video_url) + '" controls playsinline webkit-playsinline preload="metadata"></video>' +
         '<p class="wish-name">— ' + esc(w.name) + '</p></div>';
     }).join("");
+    // Native <video controls> normally buffers/plays fine on its own, but a bad or
+    // expired link should say so instead of just sitting there looking broken.
+    Array.prototype.forEach.call(list.querySelectorAll(".wish-video"), function (v) {
+      v.addEventListener("error", function () {
+        var card = v.closest(".wish-card");
+        if (card) card.insertAdjacentHTML("beforeend", '<p class="wish-status">couldn\'t load this video</p>');
+      }, { once: true });
+    });
   }
 
   // Wishes live in their own Supabase table (birthday_wishes), separate from the
-  // birthday_sites row the editor saves to — that way any visitor can post a wish
-  // without needing write access to (or any risk of overwriting) the rest of the site.
+  // birthday_sites row the editor saves to.
   function refreshWishesFromCloud() {
     if (!supa) return;
-    supa.from("birthday_wishes").select("name, video_url, created_at").eq("site_key", ensureSiteKey())
+    supa.from("birthday_wishes").select("id, name, video_url, created_at").eq("site_key", ensureSiteKey())
       .order("created_at", { ascending: false })
       .then(function (res) {
         if (res.error || !res.data) return;
         MEDIA.wishes = res.data;
         renderWishes();
+        if (typeof renderEdWishThumbs === "function") renderEdWishThumbs();
       })
       .catch(function () {});
   }
 
-  var wishForm = document.getElementById("wishForm");
-  var wishVideoInput = document.getElementById("wishVideoInput");
-  if (wishForm && wishVideoInput) {
-    wishVideoInput.addEventListener("change", function () {
-      var file = wishVideoInput.files && wishVideoInput.files[0];
-      wishVideoInput.value = "";
+  // Adding a greeting only happens here in the editor now — the published site is
+  // watch-only for visitors, so there's no open upload form on the live page.
+  var edWishThumbs = document.getElementById("edWishThumbs");
+  function renderEdWishThumbs() {
+    if (!edWishThumbs) return;
+    edWishThumbs.innerHTML = "";
+    (MEDIA.wishes || []).forEach(function (w, i) {
+      var div = document.createElement("div");
+      div.className = "thumb";
+      div.innerHTML = '<div class="thumb-img"><video src="' + esc(w.video_url) + '" muted playsinline preload="metadata"></video><button data-i="' + i + '">✕</button></div>' +
+        '<p class="thumb-caption" style="margin:4px 0 0;text-align:center">' + esc(w.name || "") + '</p>';
+      edWishThumbs.appendChild(div);
+    });
+    edWishThumbs.querySelectorAll(".thumb-img button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var i = parseInt(btn.getAttribute("data-i"), 10);
+        var removed = (MEDIA.wishes || [])[i];
+        MEDIA.wishes.splice(i, 1);
+        renderEdWishThumbs();
+        renderWishes();
+        if (supa && removed && removed.id) {
+          supa.from("birthday_wishes").delete().eq("id", removed.id).catch(function () {});
+        }
+      });
+    });
+  }
+
+  var edWishVideoInput = document.getElementById("edWishVideoInput");
+  if (edWishVideoInput) {
+    edWishVideoInput.addEventListener("change", function () {
+      var file = edWishVideoInput.files && edWishVideoInput.files[0];
+      edWishVideoInput.value = "";
       if (!file) return;
-      var nameEl = document.getElementById("wishName");
-      var statusEl = document.getElementById("wishStatus");
+      var nameEl = document.getElementById("edWishName");
+      var statusEl = document.getElementById("edWishStatus");
       var name = nameEl.value.trim();
-      if (!name) { statusEl.textContent = "Please add your name first."; return; }
-      statusEl.textContent = "Uploading your video wish... this may take a moment.";
+      if (!name) { statusEl.textContent = "Add their name first."; return; }
+      statusEl.textContent = "Uploading video greeting... this may take a moment.";
       uploadVideoFile(file, "wishes")
         .then(function (videoUrl) {
           var entry = { name: name, video_url: videoUrl, created_at: new Date().toISOString() };
           function addLocallyAndReset(msg) {
             MEDIA.wishes = [entry].concat(MEDIA.wishes || []);
+            renderEdWishThumbs();
             renderWishes();
             nameEl.value = "";
             statusEl.textContent = msg;
           }
-          if (!supa) { addLocallyAndReset("✅ Saved on this device (you're offline)."); return; }
+          if (!supa) { addLocallyAndReset("✅ Saved on this device (offline)."); return; }
           supa.from("birthday_wishes").insert({ site_key: ensureSiteKey(), name: name, video_url: videoUrl })
+            .select("id")
             .then(function (res) {
-              if (res.error) { statusEl.textContent = "Couldn't send: " + res.error.message; return; }
-              addLocallyAndReset("✅ Sent! Thank you 💛");
+              if (res.error) { statusEl.textContent = "Couldn't save: " + res.error.message; return; }
+              if (res.data && res.data[0]) entry.id = res.data[0].id;
+              addLocallyAndReset("✅ Added!");
             })
             .catch(function () {
               statusEl.textContent = "Couldn't reach the cloud — check your connection and try again.";
@@ -1409,6 +1445,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     document.getElementById("edHbdAudioStatus").textContent = (MEDIA.happyBirthdayAudio && MEDIA.happyBirthdayAudio.src) ? "✅ Audio already attached." : "No audio uploaded yet.";
     renderEdPhotoThumbs();
     renderEdVideoThumbs();
+    renderEdWishThumbs();
+    refreshWishesFromCloud();
     edTracklistRows.innerHTML = "";
     (MEDIA.music.tracklist || []).forEach(function (t) { addTrackRow(t.title, t.artist); });
     document.getElementById("editorOverlay").classList.add("is-open");
