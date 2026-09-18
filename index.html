@@ -87,7 +87,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .photo-fallback { width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; background: var(--cream-light); display: flex;
   align-items: center; justify-content: center; font-family: var(--hand); font-weight: 500; font-size: 1.1rem; color: var(--ink-soft); }
 
-#view-videos { justify-content: flex-start; padding-top: 28px; }
+#view-videos { justify-content: center; padding-top: 0; }
 #view-videos .view-inner { max-width: 460px; }
 .videos-caption { font-family: var(--sans); font-weight: 700; font-style: italic; font-size: 0.8rem; margin: 0 0 18px; text-align: left; width: 100%; }
 .video-feed { display: flex; gap: 16px; width: 100%; overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory;
@@ -96,7 +96,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .video-card { flex: 0 0 90%; max-width: 380px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
   padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center;
   backdrop-filter: blur(2px); }
-.video-card video { display: block; width: 100%; aspect-ratio: 3 / 4; max-height: 68vh; border-radius: 10px; background: #000; object-fit: cover; }
+.video-card video { display: block; width: 100%; height: auto; max-height: 68vh; border-radius: 10px; background: #000; }
 
 .music-card { width: 100%; background: var(--blush); border-radius: 16px; padding: 26px 22px 20px; display: flex;
   flex-direction: column; align-items: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
@@ -475,6 +475,20 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   }
 
   function showView(name, fromPopState) {
+    // Stop any audio that was playing on the page you're leaving — navigating to a
+    // different view (including via the back button) shouldn't leave music or the
+    // Happy Birthday clip running in the background.
+    var featureAudio = document.getElementById("feature-audio");
+    if (featureAudio && !featureAudio.paused) {
+      featureAudio.pause();
+      var playIcon = document.getElementById("music-play-icon");
+      if (playIcon) playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      var disc = document.getElementById("music-disc");
+      if (disc) disc.classList.remove("is-spinning");
+    }
+    var hbdAudio = document.getElementById("hbd-audio");
+    if (hbdAudio && !hbdAudio.paused) hbdAudio.pause();
+
     document.querySelectorAll(".view").forEach(function (el) { el.classList.remove("is-active"); });
     var target = document.getElementById("view-" + name);
     if (target) {
