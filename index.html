@@ -817,15 +817,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       function togglePlay() {
         primeIfNeeded();
         if (video.paused) {
-          if (video.readyState >= 3) {
-            playNow();
-          } else {
-            // Starting playback before enough is buffered is exactly what causes
-            // "plays a split second, stalls, plays, stalls" — waiting for canplay
-            // here means it starts once and keeps going instead of stuttering.
-            frame.classList.add("is-buffering");
-            video.addEventListener("canplay", playNow, { once: true });
-          }
+          startWhenReady();
         } else {
           video.pause();
         }
@@ -833,6 +825,40 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       function playNow() {
         var p = video.play();
         if (p && p.catch) p.catch(function () {});
+      }
+      // How many seconds of playable video sit ahead of the current position —
+      // this is the real signal for "is it actually safe to play right now,"
+      // not just "has a single frame arrived."
+      function bufferedAhead() {
+        if (!video.buffered || !video.buffered.length) return 0;
+        for (var i = 0; i < video.buffered.length; i++) {
+          if (video.currentTime >= video.buffered.start(i) - 0.15 && video.currentTime <= video.buffered.end(i) + 0.15) {
+            return video.buffered.end(i) - video.currentTime;
+          }
+        }
+        return 0;
+      }
+      function nearFullyBuffered() {
+        if (!video.duration || !video.buffered || !video.buffered.length) return false;
+        return video.buffered.end(video.buffered.length - 1) >= video.duration - 0.2;
+      }
+      var START_BUFFER = 2, RESUME_BUFFER = 2, LOW_BUFFER = 0.4;
+      var awaitingStart = false, awaitingResume = false;
+      function enoughToStart() { return nearFullyBuffered() || bufferedAhead() >= START_BUFFER; }
+      function enoughToResume() { return nearFullyBuffered() || bufferedAhead() >= RESUME_BUFFER; }
+      function onStartProgress() {
+        if (!awaitingStart) return;
+        if (enoughToStart()) { awaitingStart = false; video.removeEventListener("progress", onStartProgress); playNow(); }
+      }
+      function startWhenReady() {
+        if (enoughToStart()) { playNow(); return; }
+        frame.classList.add("is-buffering");
+        awaitingStart = true;
+        video.addEventListener("progress", onStartProgress);
+      }
+      function onResumeProgress() {
+        if (!awaitingResume) return;
+        if (enoughToResume()) { awaitingResume = false; video.removeEventListener("progress", onResumeProgress); frame.classList.remove("is-buffering"); playNow(); }
       }
       var bufferTimer = null;
       // A brief stall (a few hundred ms) is normal and recovers on its own — showing
@@ -844,10 +870,22 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       }
       function hideBuffering() {
         if (bufferTimer) { clearTimeout(bufferTimer); bufferTimer = null; }
-        frame.classList.remove("is-buffering");
+        if (!awaitingResume && !awaitingStart) frame.classList.remove("is-buffering");
       }
       video.addEventListener("loadedmetadata", function () { seek.max = video.duration || 100; });
-      video.addEventListener("timeupdate", function () { if (!seek.matches(":active")) seek.value = video.currentTime; });
+      video.addEventListener("timeupdate", function () {
+        if (!seek.matches(":active")) seek.value = video.currentTime;
+        // The core fix: instead of letting the browser play right up until it runs
+        // dry (which is what causes the repeated "plays a moment, freezes, plays"
+        // pattern), pause a beat early ourselves once the safety margin gets thin,
+        // and only resume once there's a real cushion again.
+        if (!video.paused && !awaitingResume && !nearFullyBuffered() && bufferedAhead() < LOW_BUFFER) {
+          awaitingResume = true;
+          video.pause();
+          frame.classList.add("is-buffering");
+          video.addEventListener("progress", onResumeProgress);
+        }
+      });
       video.addEventListener("waiting", showBufferingSoon);
       video.addEventListener("stalled", showBufferingSoon);
       video.addEventListener("canplay", hideBuffering);
@@ -861,12 +899,16 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
           if (ov && !ov.paused) ov.pause();
         });
       });
-      video.addEventListener("pause", function () { frame.classList.remove("is-playing"); frame.classList.remove("is-buffering"); });
+      video.addEventListener("pause", function () {
+        frame.classList.remove("is-playing");
+        if (!awaitingResume && !awaitingStart) frame.classList.remove("is-buffering");
+      });
       video.addEventListener("ended", function () { frame.classList.remove("is-playing"); });
       seek.addEventListener("input", function () { video.currentTime = seek.value; });
       playBtn.addEventListener("click", togglePlay);
       video.addEventListener("click", togglePlay);
     });
+
 
     // Pre-buffer whichever clip is actually centered/visible in the swipe feed, so
     // it's already partway loaded by the time someone taps it — without wasting
