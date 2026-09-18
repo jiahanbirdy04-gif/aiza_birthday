@@ -763,14 +763,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       var video = frame.querySelector("video");
       var playBtn = frame.querySelector(".video-play-btn");
       var seek = frame.querySelector('input[type="range"]');
-      var primed = false;
-      // Loading every clip's full video data up front makes them all fight over
-      // bandwidth (the earlier lag). Each clip still loads its lightweight metadata
-      // right away — so it shows a real frame and the right shape immediately — but
-      // only fully buffers once it's actually visible or tapped.
       function primeIfNeeded() {
-        if (primed) return;
-        primed = true;
+        if (video.dataset.primed) return;
+        video.dataset.primed = "1";
         if (video.preload !== "auto") { video.preload = "auto"; video.load(); }
       }
       function togglePlay() {
@@ -801,7 +796,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         if (!video.duration || !video.buffered || !video.buffered.length) return false;
         return video.buffered.end(video.buffered.length - 1) >= video.duration - 0.2;
       }
-      var START_BUFFER = 2, RESUME_BUFFER = 2, LOW_BUFFER = 0.4;
+      var START_BUFFER = 0.6, RESUME_BUFFER = 1, LOW_BUFFER = 0.4;
       var awaitingStart = false, awaitingResume = false;
       function enoughToStart() { return nearFullyBuffered() || bufferedAhead() >= START_BUFFER; }
       function enoughToResume() { return nearFullyBuffered() || bufferedAhead() >= RESUME_BUFFER; }
@@ -872,14 +867,22 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     // Pre-buffer whichever clip is actually centered/visible in the swipe feed, so
     // it's already partway loaded by the time someone taps it — without wasting
     // bandwidth buffering every clip in the row at once.
+    if (frames[0]) {
+      var firstVideo = frames[0].querySelector("video");
+      if (firstVideo && !firstVideo.dataset.primed) {
+        firstVideo.dataset.primed = "1";
+        firstVideo.preload = "auto";
+        firstVideo.load();
+      }
+    }
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
           var v = entry.target.querySelector("video");
-          if (v && v.preload !== "auto") { v.preload = "auto"; v.load(); }
+          if (v && !v.dataset.primed) { v.dataset.primed = "1"; v.preload = "auto"; v.load(); }
         });
-      }, { root: feed, threshold: 0.6 });
+      }, { root: feed, threshold: 0.25 });
       frames.forEach(function (frame) { io.observe(frame); });
     }
 
