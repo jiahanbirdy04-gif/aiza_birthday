@@ -24,6 +24,28 @@
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-slow: cubic-bezier(0.16, 0.84, 0.44, 1);
 }
+html[data-theme="midnight"] {
+  --cream: #1B2A4A; --cream-light: #223760; --ink: #EAF1FF; --ink-soft: #9FB3D6; --ink-dark: #0B1526;
+  --blush: #2B3F6B; --rose-card: #24365E; --lavender: #7FD9C4; --lavender-deep: #7FD9C4; --candle-btn: #F0B75E;
+}
+html[data-theme="rose"] {
+  --cream: #6B2E3A; --cream-light: #82394A; --ink: #FFF3EC; --ink-soft: #F0C4C9; --ink-dark: #3A0F17;
+  --blush: #7A3547; --rose-card: #833D4E; --lavender: #FFD08A; --lavender-deep: #FFD08A; --candle-btn: #F2A15C;
+}
+html[data-theme="sage"] {
+  --cream: #2E3B2C; --cream-light: #3A4A37; --ink: #F3F6EC; --ink-soft: #C3D1B9; --ink-dark: #141A12;
+  --blush: #3F4F3B; --rose-card: #3D4C39; --lavender: #E8C77E; --lavender-deep: #E8C77E; --candle-btn: #E0A85B;
+}
+body { transition: background 320ms var(--ease); }
+.theme-swatches { display: flex; gap: 10px; margin-top: 6px; }
+.theme-swatch { width: 38px; height: 38px; border-radius: 50%; border: 2px solid transparent; padding: 0; cursor: pointer;
+  background: linear-gradient(135deg, var(--sw-a), var(--sw-b)); transition: transform 150ms var(--ease), border-color 150ms var(--ease); }
+.theme-swatch:hover { transform: scale(1.08); }
+.theme-swatch.is-selected { border-color: var(--ink); }
+.theme-swatch[data-theme="purple"] { --sw-a: #443066; --sw-b: #FFB7A5; }
+.theme-swatch[data-theme="midnight"] { --sw-a: #1B2A4A; --sw-b: #7FD9C4; }
+.theme-swatch[data-theme="rose"] { --sw-a: #6B2E3A; --sw-b: #FFD08A; }
+.theme-swatch[data-theme="sage"] { --sw-a: #2E3B2C; --sw-b: #E8C77E; }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; background: var(--cream); color: var(--ink); font-family: var(--sans); }
 body { min-height: 100vh; overflow-x: hidden; }
@@ -34,9 +56,11 @@ button, a { font-family: inherit; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep); outline-offset: 3px; }
 
 .view { display: none; position: fixed; inset: 0; width: 100%; height: 100dvh; overflow-y: auto; flex-direction: column;
-  align-items: center; justify-content: center; padding: 48px 24px 64px; opacity: 0; animation: view-in 620ms var(--ease-slow) forwards; }
-.view.is-active { display: flex; }
+  align-items: center; justify-content: center; padding: 48px 24px 64px; opacity: 0; animation: view-in 620ms var(--ease-slow) forwards; z-index: 1; }
+.view.is-active { display: flex; z-index: 3; }
+.view.is-leaving { display: flex; z-index: 2; pointer-events: none; animation: view-out 280ms var(--ease) forwards; }
 @keyframes view-in { from { opacity: 0; transform: translateY(22px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes view-out { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-14px) scale(0.98); } }
 .view-inner { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .eyebrow { font-family: var(--hand); font-weight: 500; font-size: 1.5rem; color: var(--ink); margin: 0 0 4px; }
 .view-title { font-family: var(--serif); font-weight: 600; font-size: 2.2rem; margin: 0 0 6px; line-height: 1.15; }
@@ -50,9 +74,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .pill-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 183, 165, 0.42); }
 .pill-btn.is-candle { background: var(--candle-btn); box-shadow: 0 4px 12px rgba(192, 139, 133, 0.32); }
 
-.back-link { position: absolute; right: 24px; bottom: 22px; font-family: var(--sans); font-weight: 700; font-size: 0.86rem;
-  color: var(--ink); text-decoration: underline; text-underline-offset: 2px; background: none; border: none; cursor: pointer;
-  display: inline-flex; align-items: center; gap: 5px; }
+.back-link { position: absolute; right: 18px; bottom: 18px; font-family: var(--sans); font-weight: 700; font-size: 0.82rem;
+  color: var(--ink); background: rgba(20, 10, 30, 0.55); border: none; border-radius: 999px; padding: 9px 16px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px; backdrop-filter: blur(3px); transition: transform 150ms var(--ease), background 150ms var(--ease); }
+.back-link:hover { background: rgba(20, 10, 30, 0.75); transform: translateY(-1px); }
+.back-link:active { transform: translateY(0) scale(0.96); }
 .back-link svg { width: 16px; height: 16px; }
 
 #view-landing .view-title { font-size: 2.35rem; }
@@ -129,7 +155,10 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .photo-feed::-webkit-scrollbar { display: none; }
 .photo-card { flex: 0 0 100%; max-width: 420px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
   padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center;
-  backdrop-filter: blur(2px); }
+  backdrop-filter: blur(2px); transition: transform 220ms var(--ease), box-shadow 220ms var(--ease); }
+@media (hover: hover) {
+  .photo-card:hover, .video-card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5); }
+}
 .photo-card img { display: block; width: 100%; height: auto; max-height: 68vh; border-radius: 10px; object-fit: cover; }
 .photo-card, .video-card { opacity: 0; transform: translateY(16px); animation: card-in 560ms var(--ease-slow) forwards; }
 @keyframes card-in { to { opacity: 1; transform: translateY(0); } }
@@ -145,7 +174,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 .video-feed::-webkit-scrollbar { display: none; }
 .video-card { flex: 0 0 100%; max-width: 420px; scroll-snap-align: center; background: rgba(255, 255, 255, 0.06); border-radius: 16px;
   padding: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(2px); }
+  backdrop-filter: blur(2px); transition: transform 220ms var(--ease), box-shadow 220ms var(--ease); }
 .video-frame { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; }
 .video-frame video { display: block; width: 100%; height: auto; aspect-ratio: auto 9 / 16; max-height: 68vh; border-radius: 10px;
   background: linear-gradient(160deg, var(--cream-light), var(--rose-card)); }
@@ -200,6 +229,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 @keyframes flicker { 0%, 100% { transform: scaleY(1) rotate(-1deg); } 50% { transform: scaleY(1.08) rotate(1.5deg); } }
 .flame.is-out { animation: puff-out 420ms var(--ease) forwards; }
 @keyframes puff-out { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(1.7) translateY(-16px); } }
+.confetti-piece { position: fixed; top: -20px; z-index: 999; pointer-events: none; border-radius: 2px; will-change: transform, opacity;
+  animation: confetti-fall linear forwards; }
+@keyframes confetti-fall { to { transform: translateY(105vh) translateX(var(--drift, 0)) rotate(var(--spin, 360deg)); opacity: 0.9; } }
 .sparkle { animation: sparkle-pulse 1.8s ease-in-out infinite; transform-origin: center; }
 @keyframes sparkle-pulse { 0%, 100% { opacity: 0.55; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.05); } }
 .letter-card { width: 100%; background: var(--rose-card); border-radius: 14px; padding: 22px 20px; margin-top: 18px;
@@ -315,7 +347,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         </button>
       </div>
     </div>
-    <button class="back-link" data-goto="landing">back</button>
+    <button class="back-link" data-goto="landing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>back</button>
   </section>
 
   <section class="view" id="view-photos">
@@ -327,7 +359,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         <button class="feed-arrow is-next" id="photo-next" aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
       </div>
     </div>
-    <button class="back-link" data-goto="menu">back</button>
+    <button class="back-link" data-goto="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>back</button>
   </section>
 
   <section class="view" id="view-music">
@@ -336,7 +368,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       <div class="music-card" id="music-card"></div>
       <audio id="feature-audio"></audio>
     </div>
-    <button class="back-link" data-goto="menu">back</button>
+    <button class="back-link" data-goto="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>back</button>
   </section>
 
   <section class="view" id="view-videos">
@@ -348,7 +380,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
         <button class="feed-arrow is-next" id="video-next" aria-label="Next video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
       </div>
     </div>
-    <button class="back-link" data-goto="menu">back</button>
+    <button class="back-link" data-goto="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>back</button>
   </section>
 
   <section class="view" id="view-finale">
@@ -361,7 +393,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       </div>
       <audio id="hbd-audio" preload="auto"></audio>
     </div>
-    <button class="back-link" data-goto="menu">back</button>
+    <button class="back-link" data-goto="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>back</button>
   </section>
 </div>
 
@@ -375,6 +407,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <h2>Basics</h2>
     <label class="ed-label">Recipient's name</label>
     <input class="ed-input" id="edName" placeholder="e.g. Noy">
+    <label class="ed-label" style="margin-top:12px">Color theme</label>
+    <div class="theme-swatches" id="edThemeSwatches">
+      <button type="button" class="theme-swatch" data-theme="purple" aria-label="Purple theme"><span></span></button>
+      <button type="button" class="theme-swatch" data-theme="midnight" aria-label="Midnight theme"><span></span></button>
+      <button type="button" class="theme-swatch" data-theme="rose" aria-label="Rose theme"><span></span></button>
+      <button type="button" class="theme-swatch" data-theme="sage" aria-label="Sage theme"><span></span></button>
+    </div>
   </div>
 
   <div class="ed-section">
@@ -400,6 +439,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     <input type="file" id="edVideoInput" accept="video/*" multiple>
     <p class="ed-hint" id="edVideoStatus"></p>
     <div class="photo-thumbs" id="edVideoThumbs"></div>
+    <button class="ed-btn secondary" id="edCompressExistingVideos" type="button" style="margin-top:8px">🗜️ Shrink Already-Added Videos</button>
   </div>
 
   <div class="ed-section">
@@ -525,6 +565,87 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   // string in localStorage — could blow the ~5-10MB storage quota and silently break every
   // future save (captions included), since the failure was swallowed by a try/catch. This
   // uploads the raw file directly and, on failure, reports it honestly instead of embedding.
+  // Videos aren't touched by the browser's built-in "shrink" tricks the way JPEGs
+  // are, so oversized clips (typical of phone cameras) get re-encoded smaller right
+  // here before upload: drawn frame-by-frame onto a smaller canvas and re-recorded
+  // at a modest bitrate. This only runs on video big enough to be worth the effort,
+  // and if anything about it fails (unsupported browser, no audio track available,
+  // times out, etc.) it always falls back to uploading the original file untouched
+  // — a slow-but-working clip beats a broken one.
+  var VIDEO_COMPRESS_MIN_BYTES = 10 * 1024 * 1024;
+  var VIDEO_COMPRESS_MAX_WIDTH = 720;
+  var VIDEO_COMPRESS_BITRATE = 1200000;
+  var VIDEO_COMPRESS_TIMEOUT_MS = 4 * 60 * 1000;
+  function compressVideoFile(file) {
+    if (file.size < VIDEO_COMPRESS_MIN_BYTES) return Promise.resolve(file);
+    var canCapture = document.createElement("canvas").captureStream;
+    if (typeof MediaRecorder === "undefined" || !canCapture) return Promise.resolve(file);
+    return new Promise(function (resolve) {
+      var settled = false;
+      var url = URL.createObjectURL(file);
+      var video = document.createElement("video");
+      video.src = url;
+      video.muted = true; // muting playback avoids double-audio through speakers; the audio *track* is still captured below
+      video.playsInline = true;
+      var rafId, hardTimer, metaTimer;
+      function finish(result) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(hardTimer); clearTimeout(metaTimer);
+        if (rafId) cancelAnimationFrame(rafId);
+        try { video.pause(); } catch (e) {}
+        URL.revokeObjectURL(url);
+        resolve(result || file);
+      }
+      metaTimer = setTimeout(function () { finish(file); }, 6000);
+      hardTimer = setTimeout(function () { finish(file); }, VIDEO_COMPRESS_TIMEOUT_MS);
+      video.addEventListener("error", function () { finish(file); }, { once: true });
+      video.addEventListener("loadedmetadata", function () {
+        clearTimeout(metaTimer);
+        try {
+          var scale = Math.min(1, VIDEO_COMPRESS_MAX_WIDTH / video.videoWidth);
+          if (scale >= 0.95) { finish(file); return; } // already small enough — not worth the risk/CPU
+          var w = Math.max(2, Math.round(video.videoWidth * scale / 2) * 2);
+          var h = Math.max(2, Math.round(video.videoHeight * scale / 2) * 2);
+          var canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          var ctx = canvas.getContext("2d");
+          var combined = new MediaStream();
+          canvas.captureStream(30).getVideoTracks().forEach(function (t) { combined.addTrack(t); });
+          var srcStream = video.captureStream ? video.captureStream() : (video.mozCaptureStream ? video.mozCaptureStream() : null);
+          var audioTracks = srcStream ? srcStream.getAudioTracks() : [];
+          if (!audioTracks.length) { finish(file); return; } // never produce a silently-muted greeting
+          audioTracks.forEach(function (t) { combined.addTrack(t); });
+          var mimeType = "video/webm;codecs=vp8,opus";
+          if (!MediaRecorder.isTypeSupported(mimeType)) { finish(file); return; }
+          var recorder = new MediaRecorder(combined, { mimeType: mimeType, videoBitsPerSecond: VIDEO_COMPRESS_BITRATE });
+          var chunks = [];
+          recorder.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+          recorder.onstop = function () {
+            if (!chunks.length) { finish(file); return; }
+            var blob = new Blob(chunks, { type: "video/webm" });
+            finish(blob.size < file.size ? blob : file);
+          };
+          recorder.onerror = function () { finish(file); };
+          function drawFrame() {
+            if (video.paused || video.ended || settled) return;
+            ctx.drawImage(video, 0, 0, w, h);
+            rafId = requestAnimationFrame(drawFrame);
+          }
+          video.addEventListener("ended", function () {
+            if (rafId) cancelAnimationFrame(rafId);
+            setTimeout(function () { try { recorder.stop(); } catch (e) { finish(file); } }, 150);
+          }, { once: true });
+          recorder.start();
+          video.currentTime = 0;
+          var playPromise = video.play();
+          if (playPromise && playPromise.then) playPromise.then(drawFrame).catch(function () { finish(file); });
+          else drawFrame();
+        } catch (err) { finish(file); }
+      }, { once: true });
+    });
+  }
+
   function uploadVideoFile(file, folder) {
     folder = folder || "videos";
     if (!supa) {
@@ -544,6 +665,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   /* ====== DATA — this whole block gets replaced when you hit Download ====== */
   var MEDIA = /*MEDIA_START*/{
     recipientName: "Friend",
+    theme: "purple",
     photos: [],
     videos: [],
     siteKey: "site-l3fx40",
@@ -561,6 +683,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
 
   /* ====== View rendering (visitor-facing) ====== */
   function renderAll() {
+    document.documentElement.setAttribute("data-theme", MEDIA.theme || "purple");
     var nameEl = document.getElementById("landing-name");
     if (nameEl) nameEl.textContent = recipientName();
     renderPhotos();
@@ -585,8 +708,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (hbdAudio && !hbdAudio.paused) hbdAudio.pause();
     document.querySelectorAll(".video-frame video").forEach(function (v) { if (!v.paused) v.pause(); });
 
-    document.querySelectorAll(".view").forEach(function (el) { el.classList.remove("is-active"); });
+    var current = document.querySelector(".view.is-active");
     var target = document.getElementById("view-" + name);
+    if (current && current !== target) {
+      current.classList.remove("is-active");
+      current.classList.add("is-leaving");
+      (function (el) {
+        setTimeout(function () {
+          el.classList.remove("is-leaving");
+        }, 300);
+      })(current);
+    }
     if (target) {
       target.style.animation = "none";
       void target.offsetWidth;
@@ -606,6 +738,23 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
     if (!btn) return;
     showView(btn.getAttribute("data-goto"));
   });
+  // Swiping is a touchscreen gesture — on a laptop/desktop there's nothing to swipe
+  // with, so left/right arrow keys page through whichever feed (photos or videos)
+  // is currently on screen, matching the on-screen arrow buttons.
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    var activeView = document.querySelector(".view.is-active");
+    if (!activeView) return;
+    var feed = activeView.querySelector(".photo-feed, .video-feed");
+    if (!feed) return;
+    var tag = document.activeElement && document.activeElement.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA") return; // don't hijack typing
+    var card = feed.firstElementChild;
+    var gap = card ? (parseFloat(getComputedStyle(feed).columnGap || getComputedStyle(feed).gap || "0") || 0) : 0;
+    var step = card ? card.getBoundingClientRect().width + gap : feed.clientWidth;
+    feed.scrollBy({ left: e.key === "ArrowLeft" ? -step : step, behavior: "smooth" });
+    e.preventDefault();
+  });
   history.replaceState({ view: "landing" }, "", "#landing");
   window.addEventListener("popstate", function (e) {
     var editorOverlay = document.getElementById("editorOverlay");
@@ -623,6 +772,33 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
   });
 
   function esc(s) { return (s == null ? "" : String(s)).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+  var CONFETTI_COLORS = ["#FFB7A5", "#F5EDE6", "#E8907A", "#C9B8D9", "#FFD08A", "#7FD9C4"];
+  function launchConfetti(count) {
+    count = count || 60;
+    var frag = document.createDocumentFragment();
+    var pieces = [];
+    for (var i = 0; i < count; i++) {
+      var el = document.createElement("div");
+      var size = 6 + Math.random() * 7;
+      var isCircle = Math.random() < 0.4;
+      el.className = "confetti-piece";
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.width = size + "px";
+      el.style.height = (isCircle ? size : size * 0.4) + "px";
+      el.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      if (isCircle) el.style.borderRadius = "50%";
+      el.style.setProperty("--drift", (Math.random() * 140 - 70) + "px");
+      el.style.setProperty("--spin", (Math.random() * 720 - 360) + "deg");
+      var duration = 2.2 + Math.random() * 1.6;
+      el.style.animationDuration = duration + "s";
+      el.style.animationDelay = (Math.random() * 0.4) + "s";
+      frag.appendChild(el);
+      pieces.push(el);
+    }
+    document.body.appendChild(frag);
+    setTimeout(function () { pieces.forEach(function (p) { p.remove(); }); }, 4200);
+  }
 
   var PHOTO_BG_PALETTE = ["#443066", "#523A7A", "#5A3958", "#4C3B6C", "#5E3E56", "#4A3670"];
   var photoObserver = null;
@@ -939,6 +1115,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       blown = true;
       var flame = document.getElementById("flame");
       if (flame) flame.classList.add("is-out");
+      launchConfetti(70);
       var tapHint = document.getElementById("finale-tap-hint");
       if (tapHint) tapHint.style.display = "none";
       if (audio && audio.getAttribute("data-src")) {
@@ -1259,9 +1436,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
             msg = "⚠️ " + okCount + " added, " + failCount + " failed to upload — try those again on a stronger connection.";
           }
           if (bigFiles.length) {
-            msg += " Heads up: " + bigFiles.map(function (f) { return "\"" + f.name + "\" (" + mb(f.size) + "MB)"; }).join(", ") +
-              (bigFiles.length === 1 ? " is large and may stutter" : " are large and may stutter") +
-              " on mobile data — compress to 720p (e.g. with HandBrake, or your phone's built-in \"smaller file\" share option) and re-upload for smoother playback.";
+            msg += " Note: " + bigFiles.map(function (f) { return "\"" + f.name + "\" (" + mb(f.size) + "MB)"; }).join(", ") +
+              (bigFiles.length === 1 ? " was large, so it got auto-shrunk" : " were large, so they got auto-shrunk") +
+              " before uploading — if it still stutters for visitors, try trimming the clip shorter next time.";
           }
           statusEl.textContent = msg;
         }
@@ -1269,34 +1446,93 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lavender-deep);
       }
       if (files[i].size > VIDEO_WARN_BYTES) bigFiles.push(files[i]);
       if (statusEl) {
-        statusEl.textContent = "Uploading video " + (i + 1) + " of " + total +
-          (files[i].size > VIDEO_WARN_BYTES ? " (" + mb(files[i].size) + "MB — large, this one may stutter for visitors)" : "") +
-          " — larger clips can take a minute or two on mobile data, please keep this page open until it finishes...";
+        statusEl.textContent = (files[i].size >= VIDEO_COMPRESS_MIN_BYTES ? "Shrinking video " : "Uploading video ") + (i + 1) + " of " + total +
+          (files[i].size > VIDEO_WARN_BYTES ? " (" + mb(files[i].size) + "MB — large, may take a bit)" : "") +
+          " — please keep this page open until it finishes...";
       }
-      uploadVideoFile(files[i])
-        .then(function (finalUrl) {
-          // Saved to this device the moment each clip finishes (not just at the end of the
-          // whole batch) — so if the page gets closed or refreshed partway through, the
-          // videos already uploaded aren't lost.
-          MEDIA.videos = (MEDIA.videos || []).concat([{ src: finalUrl }]);
-          okCount++;
-          renderEdVideoThumbs();
-          scheduleAutoSave();
-          i++;
-          next();
-        })
-        .catch(function () {
-          failCount++;
-          i++;
-          next();
-        });
+      compressVideoFile(files[i]).then(function (fileToUpload) {
+        return uploadVideoFile(fileToUpload)
+          .then(function (finalUrl) {
+            // Saved to this device the moment each clip finishes (not just at the end of the
+            // whole batch) — so if the page gets closed or refreshed partway through, the
+            // videos already uploaded aren't lost.
+            MEDIA.videos = (MEDIA.videos || []).concat([{ src: finalUrl }]);
+            okCount++;
+            renderEdVideoThumbs();
+            scheduleAutoSave();
+            i++;
+            next();
+          })
+          .catch(function () {
+            failCount++;
+            i++;
+            next();
+          });
+      });
     }
     next();
+  });
+
+  // For videos added before auto-shrinking existed (or that slipped past the size
+  // check some other way): pull each one back down from cloud storage, run it
+  // through the same compressor, and re-upload it in place.
+  document.getElementById("edCompressExistingVideos").addEventListener("click", function () {
+    var statusEl = document.getElementById("edVideoStatus");
+    var videos = MEDIA.videos || [];
+    if (!videos.length) { if (statusEl) statusEl.textContent = "No videos added yet."; return; }
+    var i = 0, shrunkCount = 0, skippedCount = 0, failCount = 0;
+    function next() {
+      if (i >= videos.length) {
+        renderEdVideoThumbs();
+        var msg = "✅ Done — " + shrunkCount + " video" + (shrunkCount === 1 ? "" : "s") + " shrunk";
+        if (skippedCount) msg += ", " + skippedCount + " already small enough";
+        if (failCount) msg += ", " + failCount + " couldn't be re-processed (left as-is)";
+        msg += ".";
+        if (statusEl) statusEl.textContent = msg;
+        scheduleAutoSave();
+        return;
+      }
+      if (statusEl) statusEl.textContent = "Checking video " + (i + 1) + " of " + videos.length + "... please keep this page open.";
+      fetch(videos[i].src)
+        .then(function (r) { if (!r.ok) throw new Error("fetch failed"); return r.blob(); })
+        .then(function (blob) {
+          if (blob.size < VIDEO_COMPRESS_MIN_BYTES) { skippedCount++; i++; next(); return; }
+          if (statusEl) statusEl.textContent = "Shrinking video " + (i + 1) + " of " + videos.length + "... this may take a bit.";
+          compressVideoFile(blob)
+            .then(function (result) {
+              if (result === blob || result.size >= blob.size) { skippedCount++; i++; next(); return; }
+              return uploadVideoFile(result).then(function (finalUrl) {
+                videos[i].src = finalUrl;
+                shrunkCount++;
+                i++;
+                next();
+              });
+            })
+            .catch(function () { failCount++; i++; next(); });
+        })
+        .catch(function () { failCount++; i++; next(); });
+    }
+    next();
+  });
+
+  function updateThemeSwatchSelection() {
+    document.querySelectorAll(".theme-swatch").forEach(function (btn) {
+      btn.classList.toggle("is-selected", btn.getAttribute("data-theme") === (MEDIA.theme || "purple"));
+    });
+  }
+  document.querySelectorAll(".theme-swatch").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      MEDIA.theme = btn.getAttribute("data-theme");
+      document.documentElement.setAttribute("data-theme", MEDIA.theme);
+      updateThemeSwatchSelection();
+      scheduleAutoSave();
+    });
   });
 
   function openEditor() {
     document.getElementById("edSiteKey").value = ensureSiteKey();
     document.getElementById("edName").value = MEDIA.recipientName || "";
+    updateThemeSwatchSelection();
     document.getElementById("edMusicTitle").value = (MEDIA.music.featured && MEDIA.music.featured.title) || "";
     document.getElementById("edMusicArtist").value = (MEDIA.music.featured && MEDIA.music.featured.artist) || "";
     document.getElementById("edLetter").value = (MEDIA.letter && MEDIA.letter.body) || "";
